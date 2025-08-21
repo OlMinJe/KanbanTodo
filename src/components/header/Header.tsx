@@ -6,7 +6,7 @@ import { NavLink } from 'react-router'
 
 export default function Header() {
   return (
-    <header>
+    <header className="shrink-0">
       <h1 className="sr-only">헤더 영역입니다.</h1>
       <div className="px-5 py-5 w-full flex justify-between justify-items-center">
         <NavLink to="/" className="flex items-center">

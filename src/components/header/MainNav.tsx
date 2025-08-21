@@ -4,27 +4,29 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu'
+import { NAV_ITEMS } from '@/lib/routes'
 import { NavLink } from 'react-router'
 
 export default function MainNav() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        <NavigationMenuItem asChild>
-          <NavigationMenuLink>
-            <NavLink to="/">To-Do</NavLink>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem asChild>
-          <NavigationMenuLink>
-            <NavLink to="/timeline">타임라인</NavLink>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem asChild>
-          <NavigationMenuLink>
-            <NavLink to="/stats">통계</NavLink>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        {NAV_ITEMS.map((item) => (
+          <NavigationMenuItem key={item.to}>
+            <NavigationMenuLink asChild>
+              <NavLink
+                to={item.to}
+                className={({ isActive }) =>
+                  `px-3 py-2 text-sm ${
+                    isActive ? 'font-semibold underline' : 'opacity-80 hover:opacity-100'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        ))}
       </NavigationMenuList>
     </NavigationMenu>
   )

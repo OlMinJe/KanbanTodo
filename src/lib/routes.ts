@@ -17,6 +17,12 @@ export const NAV_ITEMS: Readonly<RouteInfo[]> = NAV_ORDER.map((k) => ROUTES[k])
 
 // 외부 링크
 export const EXTERNAL_LINKS = {
+  EMAIL: {
+    href: 'mailto:ol.minje@gmail.com',
+    label: '이메일 열기',
+    ariaLabel: '이메일 열기',
+    iconClass: 'fa-solid fa-envelope',
+  },
   BLOG: {
     href: 'https://velog.io/@ol_minje/posts',
     label: '블로그',
@@ -33,3 +39,6 @@ export const EXTERNAL_LINKS = {
 
 export type ExternalKey = keyof typeof EXTERNAL_LINKS
 export type ExternalInfo = (typeof EXTERNAL_LINKS)[ExternalKey]
+
+export const FOOTER_ORDER = ['EMAIL', 'BLOG', 'GITHUB'] as const
+export const FOOTER_LINKS: Readonly<ExternalInfo[]> = FOOTER_ORDER.map((k) => EXTERNAL_LINKS[k])

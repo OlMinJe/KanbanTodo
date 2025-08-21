@@ -1,3 +1,4 @@
+import { FOOTER_LINKS } from '@/lib/routes'
 import { NavLink } from 'react-router'
 
 export default function Footer() {
@@ -5,32 +6,20 @@ export default function Footer() {
     <footer className="p-5 bg-orange-100 text-center shrink-0">
       <div className="text-gray-400">&copy; 2025 MINJE LEE. All rights reserved.</div>
       <ul className="flex justify-center gap-3">
-        <li>
-          <label htmlFor="emailModalToggle" className="modal-open-button">
-            <i className="fa-solid fa-envelope" />
-          </label>
-          <input type="checkbox" id="emailModalToggle" hidden />
-        </li>
-        <li>
-          <NavLink
-            to="https://velog.io/@ol_minje/posts"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="블로그"
-          >
-            <i className="fa-solid fa-pen" />
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="https://github.com/OlMinJe"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-          >
-            <i className="fa-brands fa-github" />
-          </NavLink>
-        </li>
+        {FOOTER_LINKS.map((link) => (
+          <li key={link.href}>
+            <NavLink
+              to={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={link.ariaLabel}
+              title={link.label}
+              className="inline-flex items-center"
+            >
+              <i className={link.iconClass} />
+            </NavLink>
+          </li>
+        ))}
       </ul>
     </footer>
   )

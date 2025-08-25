@@ -1,5 +1,5 @@
 import CalendarDayButton from '@/components/home/CalendarDayButton'
-import { Calendar as BaseCalendar } from '@/components/ui/calendar'
+import { Calendar as BaseCalendar } from '@/components/ui'
 import { useState, type ComponentProps } from 'react'
 
 type CalendarProps = ComponentProps<typeof BaseCalendar>

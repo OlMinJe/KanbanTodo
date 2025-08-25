@@ -1,6 +1,6 @@
-import type { KanbanColumn } from '@/types/kanban'
+import type { KANBAN_COLUMNS_TYPE } from '@/feature/kanban'
 
-export const KANBAN_COLUMNS: KanbanColumn[] = [
+export const KANBAN_COLUMNS: KANBAN_COLUMNS_TYPE[] = [
   {
     key: 'todo',
     title: '할 일',

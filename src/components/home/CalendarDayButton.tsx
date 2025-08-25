@@ -1,4 +1,4 @@
-import { CalendarDayButton as BaseCalendarDayButton } from '@/components/ui/calendar'
+import { CalendarDayButton as BaseCalendarDayButton } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { type ComponentProps } from 'react'
 

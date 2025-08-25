@@ -1,9 +1,6 @@
 import { ROUTES } from '@/lib/routes'
-import Timeline from '@/routes//pages/Timeline'
 import DefaultLayout from '@/routes/layout/DefaultLayout'
-import Home from '@/routes/pages/Home'
-import NotFound from '@/routes/pages/NotFound'
-import Stats from '@/routes/pages/Stats'
+import { Home, NotFound, Stats, Timeline } from '@/routes/pages'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 
 const router = createBrowserRouter([

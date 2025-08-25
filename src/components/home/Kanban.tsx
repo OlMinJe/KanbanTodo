@@ -1,7 +1,6 @@
-import { KANBAN_COLUMNS } from '@/data/kanban'
+import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui'
+import { KANBAN_COLUMNS } from '@/feature/kanban/constants'
 import { Ellipsis, Funnel, Plus } from 'lucide-react'
-import { Badge } from '../ui/badge'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
 
 export default function Kanban() {
   return (

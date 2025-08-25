@@ -1,4 +1,4 @@
-export type KanbanColumn = {
+export type KANBAN_COLUMNS = {
   key: string
   title: string
   count: number

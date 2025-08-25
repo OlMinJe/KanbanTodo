@@ -1,5 +1,5 @@
+import { KANBAN_COLUMNS } from '@/data/kanban'
 import { Ellipsis, Funnel, Plus } from 'lucide-react'
-import { KANBAN_COLUMNS } from '../data/kanban'
 import { Badge } from '../ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
 

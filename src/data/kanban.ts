@@ -1,4 +1,4 @@
-import type { KanbanColumn } from '../types/kanban'
+import type { KanbanColumn } from '@/types/kanban'
 
 export const KANBAN_COLUMNS: KanbanColumn[] = [
   {

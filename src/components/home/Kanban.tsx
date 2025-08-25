@@ -18,7 +18,7 @@ export default function Kanban() {
                 <span className={`inline-block size-2 rounded-full ${col.dotClass}`} />
                 {col.title}
               </div>
-              <span className="rounded-md bg-white/70 px-2 py-0.5 text-xs shadow-sm">
+              <span className="rounded-md bg-white/30 px-2 py-0.5 text-xs shadow-sm">
                 {col.count}
               </span>
             </div>

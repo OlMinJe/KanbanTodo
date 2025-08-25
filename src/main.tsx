@@ -1,10 +1,15 @@
+import { ThemeProvider } from '@/feature/theme/ThemeProvider'
+import '@/index.css'
 import Router from '@/routes'
-import { StrictMode } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Router />
+    <Suspense fallback={null}>
+      <ThemeProvider>
+        <Router />
+      </ThemeProvider>
+    </Suspense>
   </StrictMode>
 )

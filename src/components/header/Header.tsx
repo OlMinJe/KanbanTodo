@@ -1,9 +1,7 @@
 import { logoImg } from '@/assets'
 import MainNav from '@/components/header/MainNav'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
+import { ThemeToggle } from '@/feature/theme'
 import { ROUTES } from '@/lib/routes'
-import { Moon, Sun } from 'lucide-react'
 import { NavLink } from 'react-router'
 
 export default function Header() {
@@ -16,13 +14,7 @@ export default function Header() {
           <span className="hidden md:inline">칸투펀치</span>
         </NavLink>
         <MainNav />
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="theme-mode">
-            <Sun className="text-orange-400" />
-            <Moon className="text-yellow-400" />
-          </Label>
-          <Switch id="theme-mode" />
-        </div>
+        <ThemeToggle />
       </div>
     </header>
   )

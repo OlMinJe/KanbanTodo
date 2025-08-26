@@ -1,6 +1,6 @@
-import AlertViewport from '@/components/alert/AlertViewport'
 import Footer from '@/components/Footer'
 import Header from '@/components/header/Header'
+import AlertViewport from '@/feature/alert/AlertViewport'
 import { Outlet } from 'react-router'
 
 export default function DefaultLayout() {

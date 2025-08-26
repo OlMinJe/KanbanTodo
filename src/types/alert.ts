@@ -19,3 +19,8 @@ export interface ALERT_STATE {
   remove: (id: string) => void
   clear: () => void
 }
+
+// props 타입
+export type ALERT_CARD_PROPS = ALERT_ITEM_INPUT & { onClose?: () => void }
+
+export type ALERT_ROW_PROPS = { item: ALERT_ITEM; onClose: (id: string) => void }

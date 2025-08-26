@@ -1,5 +1,5 @@
 import Calendar from '@/components/home/Calendar'
-import Kanban from '@/components/home/Kanban'
+import Kanban from '@/components/home/kanban/Kanban'
 
 export default function Home() {
   return (

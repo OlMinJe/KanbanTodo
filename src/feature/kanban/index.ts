@@ -1,4 +1,7 @@
 // 컴포넌트/훅
+export { default as DatePopver } from '@/feature/kanban/DatePopver'
+export { default as EditDialog } from '@/feature/kanban/EditDialog'
+export { default as KanbanForm } from '@/feature/kanban/KanbanForm'
 
 // 유틸
 

@@ -1,6 +1,12 @@
 import { type TODO, TODO_STATUS } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
-import { EditDialog, PROPS_INFO, STATUS_LABELS, TodoForm } from '@/features/todoDialog'
+import {
+  EditDialog,
+  PROPS_INFO,
+  STATUS_DIALOG_TEXT,
+  STATUS_LABELS,
+  TodoForm,
+} from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { Card, Column, mockTodos } from '@/widgets/todoBoard'
 import { Ellipsis, Trash2 } from 'lucide-react'
@@ -49,8 +55,8 @@ export default function Board() {
           <Shadcn.MenubarSeparator />
 
           <BaseDialog
-            title={PROPS_INFO.remove.title}
-            des={PROPS_INFO.remove.description}
+            title={STATUS_DIALOG_TEXT.remove.title}
+            des={STATUS_DIALOG_TEXT.remove.description}
             trigger={
               <Shadcn.MenubarItem className="text-red-400" onSelect={(e) => e.preventDefault()}>
                 삭제하기

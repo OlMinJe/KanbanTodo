@@ -6,7 +6,7 @@ export type CTX = {
   toggle: () => void
 }
 
-export type THEME_STATE = {
+export type THEME_STATE_TYPE = {
   theme: THEME
   setTheme: (t: THEME) => void
   toggle: () => void

@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 export default function BaseDialog(props: BASE_DIALOG_PROPS) {
   const {
-    type,
+    title,
     des,
     trigger,
     children,
@@ -37,7 +37,7 @@ export default function BaseDialog(props: BASE_DIALOG_PROPS) {
       <Shadcn.DialogTrigger asChild>{trigger}</Shadcn.DialogTrigger>
       <Shadcn.DialogContent className={contentClassName}>
         <Shadcn.DialogHeader>
-          <Shadcn.DialogTitle>{type}</Shadcn.DialogTitle>
+          <Shadcn.DialogTitle>{title}</Shadcn.DialogTitle>
           {des ? <Shadcn.DialogDescription>{des}</Shadcn.DialogDescription> : null}
         </Shadcn.DialogHeader>
         {render ? render(controls) : resolvedChildren}

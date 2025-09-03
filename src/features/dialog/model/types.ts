@@ -11,7 +11,7 @@ export type DIALOG_CONTROLS = {
 export type RENDER_FN = (controls: DIALOG_CONTROLS) => ReactNode
 
 export type BASE_DIALOG_PROPS = {
-  type?: string
+  title?: string
   des?: string
   trigger?: ReactNode
   contentClassName?: string

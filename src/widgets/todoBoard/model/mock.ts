@@ -48,7 +48,7 @@ export const mockTodos: TODO[] = [
   {
     id: '4',
     title: '배포 완료',
-    status: TODO_STATUS.DONE,
+    status: TODO_STATUS.COMPLETE,
     priority: TODO_PRIORITY.P3,
     isRange: false,
     date: '2025-08-25',

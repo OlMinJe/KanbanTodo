@@ -1,4 +1,5 @@
-import { TODO_STATUS, type STATUS_TYPE, type TODO_MODE } from '@/entities/todo'
+import { TODO_STATUS, type PRIORITY_TYPE, type STATUS_TYPE, type TODO_MODE } from '@/entities/todo'
+import { createTodo } from '@/entities/todo/api'
 import { BaseDialog } from '@/features/dialog'
 import {
   EditDialog,
@@ -48,11 +49,19 @@ export default function TodoForm(props: {
     return () => resetErrors()
   }, [type, init, resetErrors])
 
-  const handleSubmit = (ev: FormEvent) => {
+  const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault()
     if (!validateCore() || !validateSchedule()) return
+
     const payload = buildPayload()
+
     console.log('payload', payload)
+
+    if (type === 'create') {
+      const created = await createTodo(payload)
+      console.log('created', created)
+      onCancel() // 리스트 갱신
+    }
   }
 
   return (
@@ -93,7 +102,7 @@ export default function TodoForm(props: {
             triggerClassName="w-[120px]"
             options={PRIOITY_OPTIONS}
             value={priority}
-            onValueChange={(v: any) => setPriority(v as string)}
+            onValueChange={(v: any) => setPriority(v as PRIORITY_TYPE)}
           />
         </div>
       </fieldset>

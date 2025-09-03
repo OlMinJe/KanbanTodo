@@ -12,7 +12,7 @@ export type KanbanReadData = {
   description?: string
 }
 
-export default function KanbanFormRead({ data }: { data: KanbanReadData }) {
+export default function TodoFormRead({ data }: { data: KanbanReadData }) {
   return (
     <div className="flex flex-col gap-5">
       <section className="space-y-2">

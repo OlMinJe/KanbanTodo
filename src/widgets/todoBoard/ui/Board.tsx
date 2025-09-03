@@ -1,6 +1,6 @@
 import { type STATUS_TYPE, type TODO, Card, Column, TODO_STATUS } from '@/entities/todo'
 import { BaseDialog, PROPS_INFO } from '@/features/dialog'
-import { EditDialog, KanbanForm } from '@/features/todoWrite'
+import { EditDialog, TodoForm } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { mockTodos } from '@/widgets/todoBoard'
 import { Ellipsis, Trash2 } from 'lucide-react'
@@ -30,7 +30,7 @@ export default function Board() {
               <Shadcn.MenubarItem onSelect={(e) => e.preventDefault()}>수정하기</Shadcn.MenubarItem>
             }
           >
-            {({ close }) => <KanbanForm type="update" onCancel={close} />}
+            {({ close }) => <TodoForm type="update" onCancel={close} />}
           </BaseDialog>
 
           <Shadcn.MenubarItem>복사하기(추후)</Shadcn.MenubarItem>

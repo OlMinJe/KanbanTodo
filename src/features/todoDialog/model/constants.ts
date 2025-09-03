@@ -1,4 +1,4 @@
-import { type TODO_COLUMNS } from '@/features/todoWrite'
+import { type TODO_COLUMNS } from '@/features/todoDialog'
 import { type OPTION } from '@/shared/ui/form'
 
 export const TASK_STATUS_OPTIONS: OPTION[] = [

@@ -1,5 +1,5 @@
 import { type MOODS, Complete, Delete, Hold } from '@/features/dialog'
-import { type EDIT_DIALOG_PROPS } from '@/features/todoWrite'
+import { type EDIT_DIALOG_PROPS } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { useState } from 'react'
 

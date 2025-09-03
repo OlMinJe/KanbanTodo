@@ -1,4 +1,4 @@
-import { ROUTES } from '@/shared/lib/routes'
+import { ROUTES } from '@/shared/lib'
 import { DefaultLayout } from '@/widgets/layout'
 import { lazy } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router'

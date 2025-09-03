@@ -1,5 +1,5 @@
 import { type FORM_ERRORS, type SCHEDULE_PAYLOAD, type STATUS_TYPE } from '@/entities/todo'
-import { toISO } from '@/shared/lib/toISO'
+import { toISO } from '@/shared/lib'
 
 export const makeCoreErrors = (
   title: string,

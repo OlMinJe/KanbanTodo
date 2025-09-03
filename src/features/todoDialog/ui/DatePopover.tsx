@@ -1,4 +1,4 @@
-import { fmt } from '@/shared/lib/date'
+import { fmt } from '@/shared/lib'
 import { DateField, type TRIGGER_PROPS } from '@/shared/ui/form'
 import { memo, useEffect, useMemo, useState } from 'react'
 

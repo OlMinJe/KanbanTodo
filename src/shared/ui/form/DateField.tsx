@@ -1,4 +1,4 @@
-import { fmt } from '@/shared/lib/date'
+import { fmt } from '@/shared/lib'
 import { BaseField, type DATE_TYPE, type TRIGGER_PROPS } from '@/shared/ui/form'
 import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/shadcn'
 import { ChevronDownIcon } from 'lucide-react'

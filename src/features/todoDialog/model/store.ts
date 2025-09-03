@@ -1,4 +1,4 @@
-import { TODO_STATUS, type FORM_ERRORS, type TODO_FORM_STORE } from '@/entities/todo'
+import { type FORM_ERRORS, type SUBMIT_PAYLOAD, type TODO_FORM_STORE } from '@/entities/todo'
 import {
   INITIAL_STATE,
   buildSchedule,
@@ -67,7 +67,7 @@ export const todoFormStore = createStore<TODO_FORM_STORE>((set, get) => ({
     set((s) => ({ timeEnd: v, errors: { ...s.errors, timeEnd: undefined, range: undefined } })),
 
   // dialog
-  openEditForStatus: () => set({ editVariant: TODO_STATUS[get().taskStatus], editOpen: true }),
+  openEditForStatus: () => set({ editVariant: get().editVariant, editOpen: true }),
   closeEdit: () => set({ editOpen: false }),
 
   // validate
@@ -105,7 +105,8 @@ export const todoFormStore = createStore<TODO_FORM_STORE>((set, get) => ({
       s.dateEnd,
       s.timeEnd
     )
-    return {
+
+    const payload: SUBMIT_PAYLOAD = {
       title: s.title,
       taskStatus: s.taskStatus,
       priority: s.priority,
@@ -113,5 +114,6 @@ export const todoFormStore = createStore<TODO_FORM_STORE>((set, get) => ({
       mode: s.mode,
       schedule,
     }
+    return payload
   },
 }))

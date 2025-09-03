@@ -57,7 +57,7 @@ export type SCHEDULE_PAYLOAD =
 export type SUBMIT_PAYLOAD = {
   title: string
   taskStatus: STATUS_TYPE | ''
-  priority: PRIORITY_TYPE
+  priority: PRIORITY_TYPE | ''
   description: string
   mode: TODO_MODE
   schedule: SCHEDULE_PAYLOAD
@@ -76,7 +76,7 @@ export type TODO_FORM_STORE = {
   mode: TODO_MODE
   title: string
   taskStatus: STATUS_TYPE | ''
-  priority: string
+  priority: PRIORITY_TYPE | ''
   description: string
 
   // 일정(단일/기간)
@@ -105,7 +105,7 @@ export type TODO_FORM_STORE = {
   // setters
   setTitle: (v: string) => void
   setTaskStatus: (v: STATUS_TYPE | '') => void
-  setPriority: (v: string) => void
+  setPriority: (v: PRIORITY_TYPE | '') => void
   setDescription: (v: string) => void
   setIsRange: (b: boolean) => void
   setDateSingle: (d: Date | null) => void

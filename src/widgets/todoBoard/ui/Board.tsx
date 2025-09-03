@@ -1,6 +1,6 @@
 import { type STATUS_TYPE, type TODO, Card, Column, TODO_STATUS } from '@/entities/todo'
-import { BaseDialog, PROPS_INFO } from '@/features/dialog'
-import { EditDialog, TodoForm } from '@/features/todoDialog'
+import { BaseDialog } from '@/features/dialog'
+import { EditDialog, PROPS_INFO, TodoForm } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { mockTodos } from '@/widgets/todoBoard'
 import { Ellipsis, Trash2 } from 'lucide-react'

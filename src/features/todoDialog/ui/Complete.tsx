@@ -1,4 +1,4 @@
-import { MOODS, NOTE_MAX } from '@/features/dialog'
+import { MOODS, NOTE_MAX } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 
 export default function Complete(props: any) {

@@ -1,3 +1,4 @@
+// mockTodos.ts
 import { TODO_PRIORITY, TODO_STATUS, type TODO } from '@/entities/todo'
 
 export const mockTodos: TODO[] = [
@@ -5,10 +6,10 @@ export const mockTodos: TODO[] = [
     id: '1',
     title: '보고서 초안 작성',
     status: TODO_STATUS.TODO,
-    priority: TODO_PRIORITY.P1,
+    priority: TODO_PRIORITY.P2, // 우선순위는 상수로 통일
     isRange: false,
     date: '2025-09-01',
-    time: '09:00',
+    time: '09:00:00',
     description: '팀 회의 전에 초안 작성',
     tags: ['문서', '중요'],
     createdAt: '2025-08-29T10:00:00Z',
@@ -22,8 +23,8 @@ export const mockTodos: TODO[] = [
     isRange: true,
     startDate: '2025-08-28',
     endDate: '2025-09-02',
-    startTime: '10:00',
-    endTime: '18:00',
+    startTime: '10:00:00',
+    endTime: '18:00:00',
     description: '디자인 팀 피드백 반영',
     tags: ['디자인'],
     createdAt: '2025-08-27T15:00:00Z',
@@ -32,11 +33,11 @@ export const mockTodos: TODO[] = [
   {
     id: '3',
     title: 'API 연동',
-    status: TODO_STATUS.ON_HOLD,
+    status: TODO_STATUS.HOLD,
     priority: TODO_PRIORITY.P1,
     isRange: false,
     date: '2025-09-03',
-    time: '13:00',
+    time: '13:00:00',
     description: '백엔드 팀 응답 대기',
     tags: ['개발'],
     onHoldReason: '백엔드 준비 미완료',
@@ -51,7 +52,7 @@ export const mockTodos: TODO[] = [
     priority: TODO_PRIORITY.P3,
     isRange: false,
     date: '2025-08-25',
-    time: '16:00',
+    time: '16:00:00',
     description: '테스트 서버에 배포 완료',
     tags: ['배포'],
     completionNote: 'QA 검수 완료',

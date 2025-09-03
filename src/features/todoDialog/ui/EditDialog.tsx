@@ -1,7 +1,13 @@
-import { type MOODS, Complete, Delete, Hold } from '@/features/dialog'
-import { type EDIT_DIALOG_PROPS } from '@/features/todoDialog'
+import type { STATUS_TYPE } from '@/entities/todo'
+import { Complete, Delete, Hold, MOODS } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { useState } from 'react'
+
+type EDIT_DIALOG_PROPS = {
+  variant: STATUS_TYPE
+  defaults?: { reason: string; mood: string; note: string }
+  onCancel: () => void
+}
 
 export default function EditDialog(props: EDIT_DIALOG_PROPS & { onSuccess?: () => void }) {
   const { variant = 'markAsComplete', defaults, onCancel, onSuccess } = props
@@ -12,11 +18,11 @@ export default function EditDialog(props: EDIT_DIALOG_PROPS & { onSuccess?: () =
 
   return (
     <div>
-      {variant === 'markAsTodo' && <Hold reason={reason} setReason={setReason} />}
+      {variant === 'todo' && <Hold reason={reason} setReason={setReason} />}
 
-      {variant === 'markAsHold' && <Hold reason={reason} setReason={setReason} />}
+      {variant === 'hold' && <Hold reason={reason} setReason={setReason} />}
 
-      {variant === 'markAsComplete' && (
+      {variant === 'complete' && (
         <Complete mood={mood} setMood={setMood} note={note} setNote={setNote} />
       )}
 

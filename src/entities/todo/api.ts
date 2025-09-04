@@ -52,3 +52,7 @@ export async function createTodo(payload: SUBMIT_PAYLOAD): Promise<TODO> {
   saveJSON<TODO[]>(STORAGE_KEY, list)
   return record
 }
+
+export async function listTodos(): Promise<TODO[]> {
+  return loadJSON<TODO[]>(STORAGE_KEY, [])
+}

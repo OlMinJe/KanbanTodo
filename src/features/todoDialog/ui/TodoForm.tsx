@@ -1,5 +1,11 @@
-import { TODO_STATUS, type PRIORITY_TYPE, type STATUS_TYPE, type TODO_MODE } from '@/entities/todo'
-import { createTodo } from '@/entities/todo/api'
+import {
+  TODO_STATUS,
+  type PRIORITY_TYPE,
+  type STATUS_TYPE,
+  type TODO,
+  type TODO_MODE,
+} from '@/entities/todo'
+import { createTodo, updateTodo } from '@/entities/todo/api'
 import { BaseDialog } from '@/features/dialog'
 import {
   EditDialog,
@@ -16,8 +22,9 @@ import { useEffect, type FormEvent } from 'react'
 export default function TodoForm(props: {
   type: Extract<TODO_MODE, 'create' | 'update'>
   onCancel: () => void
+  todo: TODO
 }) {
-  const { type, onCancel } = props
+  const { type, onCancel, todo } = props
   const {
     // init
     init,
@@ -49,6 +56,13 @@ export default function TodoForm(props: {
     return () => resetErrors()
   }, [type, init, resetErrors])
 
+  useEffect(() => {
+    todo.title && setTitle(todo.title)
+    todo.status && setTaskStatus(todo.status)
+    todo.priority && setPriority(todo.priority)
+    todo.description && setDescription(todo.description)
+    todo.title && setTitle(todo.title)
+  }, [])
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault()
     if (!validateCore() || !validateSchedule()) return
@@ -60,7 +74,13 @@ export default function TodoForm(props: {
     if (type === 'create') {
       const created = await createTodo(payload)
       console.log('created', created)
-      onCancel() // 리스트 갱신
+      onCancel() // TODO: 리스트 갱신 필요
+    }
+
+    if (type === 'update') {
+      const update = await updateTodo(todo.id, {} as TODO)
+      console.log('update', update)
+      onCancel() // TODO: 리스트 갱신 필요
     }
   }
 
@@ -107,7 +127,7 @@ export default function TodoForm(props: {
         </div>
       </fieldset>
 
-      <ScheduleSection />
+      <ScheduleSection todo={todo} />
 
       <fieldset className="mb-5">
         <InputField

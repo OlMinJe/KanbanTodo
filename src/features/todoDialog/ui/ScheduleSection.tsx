@@ -1,9 +1,10 @@
+import type { TODO } from '@/entities/todo'
 import { DatePopover, useTodoFormStore } from '@/features/todoDialog'
 import { InputField } from '@/shared/ui/form'
 import { Switch } from '@/shared/ui/shadcn'
-import type { ChangeEvent } from 'react'
+import { useEffect, type ChangeEvent } from 'react'
 
-export default function ScheduleSection() {
+export default function ScheduleSection({ todo }: { todo: TODO }) {
   const {
     isRange,
     setIsRange,
@@ -22,6 +23,16 @@ export default function ScheduleSection() {
     errors,
     clearErrors,
   } = useTodoFormStore((s) => s)
+
+  useEffect(() => {
+    setIsRange(todo.isRange)
+    todo.date && setDateSingle(new Date(todo.date))
+    todo.time && setTimeSingle(todo.time)
+    todo.startDate && setDateStart(new Date(todo.startDate))
+    todo.startTime && setTimeStart(todo.startTime)
+    todo.endDate && setDateEnd(new Date(todo.endDate))
+    todo.endTime && setTimeEnd(todo.endTime)
+  }, [todo?.id])
 
   return (
     <fieldset className="mt-4 space-y-3">

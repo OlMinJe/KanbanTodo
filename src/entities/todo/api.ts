@@ -56,3 +56,20 @@ export async function createTodo(payload: SUBMIT_PAYLOAD): Promise<TODO> {
 export async function listTodos(): Promise<TODO[]> {
   return loadJSON<TODO[]>(STORAGE_KEY, [])
 }
+
+export async function getTodo(id: string): Promise<TODO | undefined> {
+  return loadJSON<TODO[]>(STORAGE_KEY, []).find((t) => t.id === id)
+}
+
+export async function updateTodo(id: string, payload: TODO): Promise<TODO | undefined> {
+  const list = loadJSON<TODO[]>(STORAGE_KEY, [])
+  const idx = list.findIndex((t) => t.id === id)
+  if (idx < 0) return
+  const next: TODO = {
+    ...list[idx],
+    ...{ ...payload, updatedAt: new Date().toISOString() },
+  }
+  list[idx] = next
+  saveJSON<TODO[]>(STORAGE_KEY, list)
+  return next
+}

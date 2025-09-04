@@ -11,9 +11,9 @@ export const TODO_STATUS = {
 
 // 우선순위
 export const TODO_PRIORITY = {
-  P1: '1',
-  P2: '2',
-  P3: '3',
+  P1: 'P1',
+  P2: 'P2',
+  P3: 'P3',
 } as const
 
 // 값 배열

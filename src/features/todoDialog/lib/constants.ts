@@ -17,9 +17,9 @@ export const TASK_STATUS_OPTIONS: OPTION[] = [
 ]
 
 export const PRIOITY_OPTIONS: OPTION[] = [
-  { value: '1', label: '1순위' },
-  { value: '2', label: '2순위' },
-  { value: '3', label: '3순위' },
+  { value: 'P1', label: '1순위' },
+  { value: 'P2', label: '2순위' },
+  { value: 'P3', label: '3순위' },
 ]
 
 export const MOODS = ['😀', '🙂', '😐', '🙁', '😫'] as const

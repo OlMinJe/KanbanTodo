@@ -7,41 +7,48 @@ import { useEffect, type ChangeEvent } from 'react'
 export default function ScheduleSection({ todo }: { todo: TODO }) {
   const {
     isRange,
-    setIsRange,
     dateSingle,
-    setDateSingle,
     timeSingle,
-    setTimeSingle,
     dateStart,
-    setDateStart,
     timeStart,
-    setTimeStart,
     dateEnd,
-    setDateEnd,
     timeEnd,
-    setTimeEnd,
     errors,
+    setField,
     clearErrors,
-  } = useTodoFormStore((s) => s)
+  } = useTodoFormStore((s) => ({
+    isRange: s.isRange,
+    dateSingle: s.dateSingle,
+    timeSingle: s.timeSingle,
+    dateStart: s.dateStart,
+    timeStart: s.timeStart,
+    dateEnd: s.dateEnd,
+    timeEnd: s.timeEnd,
+    errors: s.errors,
+    setField: s.setField,
+    clearErrors: s.clearErrors,
+  }))
 
   useEffect(() => {
-    setIsRange(todo.isRange)
-    todo.date && setDateSingle(new Date(todo.date))
-    todo.time && setTimeSingle(todo.time)
-    todo.startDate && setDateStart(new Date(todo.startDate))
-    todo.startTime && setTimeStart(todo.startTime)
-    todo.endDate && setDateEnd(new Date(todo.endDate))
-    todo.endTime && setTimeEnd(todo.endTime)
+    if (!todo?.id) return
+    if (todo.isRange != null) setField('isRange', !!todo.isRange)
+    if (todo.date) setField('dateSingle', new Date(todo.date))
+    if (todo.time) setField('timeSingle', todo.time)
+    if (todo.startDate) setField('dateStart', new Date(todo.startDate))
+    if (todo.startTime) setField('timeStart', todo.startTime)
+    if (todo.endDate) setField('dateEnd', new Date(todo.endDate))
+    if (todo.endTime) setField('timeEnd', todo.endTime)
   }, [todo?.id])
 
   return (
     <fieldset className="mt-4 space-y-3">
       <legend className="sr-only">날짜/시간</legend>
+
       <div className="flex items-center gap-2">
         <Switch
-          checked={isRange}
+          checked={!!isRange}
           onCheckedChange={(b) => {
-            setIsRange(b)
+            setField('isRange', b)
             clearErrors?.(['date', 'time', 'dateStart', 'timeStart', 'dateEnd', 'timeEnd', 'range'])
           }}
         />
@@ -58,7 +65,7 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
             containerClassName="flex flex-col gap-3"
             value={dateSingle}
             onValueChange={(d) => {
-              setDateSingle(d)
+              setField('dateSingle', d)
               clearErrors?.(['date'])
             }}
             error={errors?.date}
@@ -73,7 +80,7 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
             step="1"
             value={timeSingle}
             onChange={(e: any) => {
-              setTimeSingle(e.target.value)
+              setField('timeSingle', e.target.value)
               clearErrors?.(['time'])
             }}
             error={errors?.time}
@@ -92,7 +99,7 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
               containerClassName="flex flex-col gap-3"
               value={dateStart}
               onValueChange={(d) => {
-                setDateStart(d)
+                setField('dateStart', d)
                 clearErrors?.(['dateStart', 'range'])
               }}
               error={errors?.dateStart}
@@ -107,12 +114,13 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
               step="1"
               value={timeStart}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setTimeStart(e.target.value)
+                setField('timeStart', e.target.value)
                 clearErrors?.(['timeStart', 'range'])
               }}
               error={errors?.timeStart}
             />
           </div>
+
           <div className="flex gap-4">
             <DatePopover
               id="range-end-date"
@@ -122,7 +130,7 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
               containerClassName="flex flex-col gap-3"
               value={dateEnd}
               onValueChange={(d) => {
-                setDateEnd(d)
+                setField('dateEnd', d)
                 clearErrors?.(['dateEnd', 'range'])
               }}
               error={errors?.dateEnd}
@@ -137,12 +145,13 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
               step="1"
               value={timeEnd}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setTimeEnd(e.target.value)
+                setField('timeEnd', e.target.value)
                 clearErrors?.(['timeEnd', 'range'])
               }}
               error={errors?.timeEnd}
             />
           </div>
+
           {errors?.range && <p className="text-xs text-red-600">{errors.range}</p>}
         </>
       )}

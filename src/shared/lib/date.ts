@@ -1,14 +1,11 @@
-export function fmt(
-  d?: Date,
-  locale = 'ko-KR',
-  options: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeZone: 'Asia/Seoul' }
-): string {
-  if (!d) return ''
-  try {
-    return new Intl.DateTimeFormat(locale, options).format(d)
-  } catch {
-    return d.toISOString().slice(0, 10)
-  }
+export type DateInput = Date | string | number | null | undefined
+
+export function fmt(d: DateInput, fallback = ''): string {
+  if (d == null) return fallback
+  const date = d instanceof Date ? d : new Date(d)
+  if (Number.isNaN(date.getTime())) return fallback
+  // 필요하면 포맷 커스터마이즈 (예: date-fns format 사용)
+  return date.toISOString().slice(0, 10) // YYYY-MM-DD
 }
 
 // fmt(new Date())                                  // 2025. 08. 26. (예시)

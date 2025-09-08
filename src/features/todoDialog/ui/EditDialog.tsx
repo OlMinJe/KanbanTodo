@@ -11,11 +11,13 @@ type EDIT_DIALOG_PROPS = {
 }
 
 export default function EditDialog(props: EDIT_DIALOG_PROPS & { onSuccess?: () => void }) {
-  const { variant = 'markAsComplete', defaults, onCancel, onSuccess } = props
+  const { variant, defaults, onCancel, onSuccess } = props
 
   const [reason, setReason] = useState(defaults?.reason ?? '')
   const [mood, setMood] = useState(defaults?.mood as (typeof MOODS)[number])
   const [note, setNote] = useState(defaults?.note ?? '')
+
+  console.log(variant)
 
   return (
     <div>

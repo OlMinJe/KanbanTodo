@@ -1,4 +1,4 @@
-import { type TODO } from '@/entities/todo'
+import { removeTodo, type TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import { EditDialog, PROPS_INFO, STATUS_DIALOG_TEXT, TodoForm } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
@@ -6,6 +6,11 @@ import { Ellipsis, Trash2 } from 'lucide-react'
 
 export default function Menu({ todo }: { todo: TODO }) {
   const prevent = (e: Event) => e.preventDefault()
+
+  const confirmRemove = async () => {
+    const ok = await removeTodo(todo.id)
+    console.log('remove', ok)
+  }
 
   return (
     <Shadcn.Menubar className="bg-transparent border-0 p-0 shadow-none h-auto inline-flex">
@@ -38,7 +43,17 @@ export default function Menu({ todo }: { todo: TODO }) {
               </Shadcn.MenubarItem>
             }
           >
-            {({ close }) => <EditDialog variant="remove" onCancel={close} todo={todo} />}
+            {({ close }) => (
+              <EditDialog
+                variant="remove"
+                onCancel={close}
+                todo={todo}
+                onSuccess={async () => {
+                  await confirmRemove()
+                  close()
+                }}
+              />
+            )}
           </BaseDialog>
         </Shadcn.MenubarContent>
       </Shadcn.MenubarMenu>

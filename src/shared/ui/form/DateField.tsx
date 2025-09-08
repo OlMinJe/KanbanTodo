@@ -2,6 +2,7 @@ import { fmt } from '@/shared/lib'
 import { BaseField, type DATE_TYPE, type TRIGGER_PROPS } from '@/shared/ui/form'
 import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/shadcn'
 import { ChevronDownIcon } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
 
 type DATE_FIELD_PROPS = TRIGGER_PROPS & {
   value: DATE_TYPE
@@ -14,6 +15,19 @@ export default function DateField(props: DATE_FIELD_PROPS) {
   const { id, name, label, required, hint, error, containerClassName, placeholder, ...restProps } =
     props
   const { disabled = false, value, onChange, open, onOpenChange } = restProps
+
+  const selected = useMemo(() => {
+    if (!value) return undefined
+    return value instanceof Date ? value : new Date(value as any)
+  }, [value])
+
+  useEffect(() => {
+    if (!selected) {
+      onChange(new Date() as any)
+    }
+  }, [])
+
+  const displayText = fmt(selected) || placeholder || fmt(new Date())
 
   return (
     <BaseField
@@ -35,7 +49,7 @@ export default function DateField(props: DATE_FIELD_PROPS) {
               className="w-40 justify-between font-normal"
               {...common}
             >
-              <span>{fmt(value) || placeholder}</span>
+              <span>{displayText}</span>
               <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-60" />
             </Button>
           </PopoverTrigger>
@@ -44,9 +58,9 @@ export default function DateField(props: DATE_FIELD_PROPS) {
             <Calendar
               mode="single"
               captionLayout="dropdown"
-              selected={value}
+              selected={selected}
               onSelect={(d) => {
-                onChange(d)
+                onChange((d ?? null) as any)
                 onOpenChange(false)
               }}
             />

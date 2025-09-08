@@ -1,6 +1,6 @@
 import { fmt } from '@/shared/lib'
 import { DateField, type TRIGGER_PROPS } from '@/shared/ui/form'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 
 type Props = TRIGGER_PROPS & {
   value?: Date | null
@@ -35,6 +35,16 @@ const DatePopover = (props: Props) => {
   useEffect(() => {
     if (!isControlled && inner === undefined) setInner(today)
   }, [isControlled, inner, today])
+
+  const didInitControlled = useRef(false)
+  useEffect(() => {
+    if (!isControlled) return
+    if (didInitControlled.current) return
+    if (value == null) {
+      onValueChange?.(today)
+      didInitControlled.current = true
+    }
+  }, [isControlled, value, today, onValueChange])
 
   const val = isControlled ? (value ?? undefined) : inner
   const setVal = (d?: Date) => {

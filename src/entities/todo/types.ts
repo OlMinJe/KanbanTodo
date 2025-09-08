@@ -1,7 +1,8 @@
 import type { TODO_PRIORITY, TODO_STATUS } from '@/entities/todo'
 
-export type PRIORITY_TYPE = (typeof TODO_PRIORITY)[keyof typeof TODO_PRIORITY] // 숫자 우선순위
-export type STATUS_TYPE = (typeof TODO_STATUS)[keyof typeof TODO_STATUS] // 작업 상태
+// 기본 엔티티 타입들
+export type PRIORITY_TYPE = (typeof TODO_PRIORITY)[keyof typeof TODO_PRIORITY]
+export type STATUS_TYPE = (typeof TODO_STATUS)[keyof typeof TODO_STATUS]
 
 export type TODO_MODE = 'create' | 'update' | 'remove'
 
@@ -10,13 +11,14 @@ export interface TODO {
   title: string // [필수]
   status: STATUS_TYPE // [필수]
   priority: PRIORITY_TYPE // [필수]
+
   // 날짜/시간 (단일 or 기간)
   isRange: boolean // true면 기간
   date?: string // YYYY-MM-DD (단일)
   startDate?: string // YYYY-MM-DD (기간 시작)
   endDate?: string // YYYY-MM-DD (기간 종료)
   time?: string // HH:mm:ss (단일)
-  startTime?: string // HH:mm:ss (기간 시작 시간)
+  startTime?: string // HH:mm:ss (기간 시작)
   endTime?: string // HH:mm:ss (기간 종료 시간)
 
   description?: string | null // [선택]
@@ -36,7 +38,7 @@ export interface TODO {
   deleteReason?: string | null // [선택]
 }
 
-// store
+// 폼 유효성 에러
 export type FORM_ERRORS = Partial<{
   title: string
   taskStatus: string
@@ -50,6 +52,7 @@ export type FORM_ERRORS = Partial<{
   range: string
 }>
 
+// 제출 페이로드
 export type SCHEDULE_PAYLOAD =
   | { type: 'single'; at: string | null }
   | { type: 'range'; start: string | null; end: string | null }
@@ -63,15 +66,8 @@ export type SUBMIT_PAYLOAD = {
   schedule: SCHEDULE_PAYLOAD
 }
 
-export type INIT_OPTION = {
-  mode: TODO_MODE
-  initial?: Partial<Pick<TODO_FORM_STORE, 'title' | 'taskStatus' | 'priority' | 'description'>> & {
-    date?: Date | null
-    time?: string
-  }
-}
-
-export type TODO_FORM_STORE = {
+// 스토어의 '순수 필드(상태)'만 분리
+export type TODO_FORM_FIELDS = {
   // 기본 필드
   mode: TODO_MODE
   title: string
@@ -96,13 +92,29 @@ export type TODO_FORM_STORE = {
 
   // 에러
   errors: FORM_ERRORS
-  clearErrors?: (keys: (keyof FORM_ERRORS)[]) => void
+}
 
-  // lifecycles
+// 액션(메서드)들
+export type TODO_FORM_ACTIONS = {
   init: (opts: INIT_OPTION) => void
   resetErrors: () => void
+  clearErrors: (keys: (keyof FORM_ERRORS)[]) => void
 
-  // setters
+  // 단일/일괄 setter
+  setField: <K extends keyof TODO_FORM_FIELDS>(key: K, value: TODO_FORM_FIELDS[K]) => void
+  setFields: (partial: Partial<TODO_FORM_FIELDS>) => void
+
+  // dialog
+  openEditForStatus: (editVariant: STATUS_TYPE) => void
+  closeEdit: () => void
+
+  // validate & payload
+  validateCore: () => boolean
+  validateSchedule: () => boolean
+  buildPayload: () => SUBMIT_PAYLOAD
+}
+
+export type TODO_FORM_LEGACY_SETTERS = Partial<{
   setTitle: (v: string) => void
   setTaskStatus: (v: STATUS_TYPE | '') => void
   setPriority: (v: PRIORITY_TYPE | '') => void
@@ -114,13 +126,16 @@ export type TODO_FORM_STORE = {
   setTimeStart: (v: string) => void
   setDateEnd: (d: Date | null) => void
   setTimeEnd: (v: string) => void
+}>
 
-  // dialog
-  openEditForStatus: () => void
-  closeEdit: () => void
+// 최종 스토어 타입
+export type TODO_FORM_STORE = TODO_FORM_FIELDS & TODO_FORM_ACTIONS & TODO_FORM_LEGACY_SETTERS
 
-  // validate & payload
-  validateCore: () => boolean
-  validateSchedule: () => boolean
-  buildPayload: () => SUBMIT_PAYLOAD
+// init 옵션
+export type INIT_OPTION = {
+  mode: TODO_MODE
+  initial?: Partial<Pick<TODO_FORM_FIELDS, 'title' | 'taskStatus' | 'priority' | 'description'>> & {
+    date?: Date | null
+    time?: string
+  }
 }

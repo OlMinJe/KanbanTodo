@@ -1,21 +1,17 @@
 import type { PRIORITY_TYPE, STATUS_TYPE } from '@/entities/todo'
 
-// 작업 상태
 export const TODO_STATUS = {
   TODO: 'todo',
-  HOLD: 'hold',
-  IN_PROGRESS: 'inProgress',
-  COMPLETE: 'complete',
+  DOING: 'doing',
+  DONE: 'done',
   REMOVE: 'remove',
-} as const
+  DEFER: 'defer',
+} as const satisfies Record<string, STATUS_TYPE>
 
-// 우선순위
 export const TODO_PRIORITY = {
   P1: 'P1',
   P2: 'P2',
   P3: 'P3',
-} as const
+} as const satisfies Record<string, PRIORITY_TYPE>
 
-// 값 배열
-export const PRIORITY_VALUES = Object.values(TODO_PRIORITY) as PRIORITY_TYPE[]
-export const STATUS_VALUES = Object.values(TODO_STATUS) as STATUS_TYPE[]
+export const TODO_KEY = import.meta.env.VITE_STORAGE_TODO_KEY

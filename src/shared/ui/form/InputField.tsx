@@ -17,7 +17,7 @@ export default function InputField(props: INPUT_FIELD_PROPS) {
       error={error}
       containerClassName={containerClassName}
     >
-      {(common) => <Input {...rest} {...common} />}
+      {(common) => <Input {...common} {...rest} />}
     </BaseField>
   )
 }

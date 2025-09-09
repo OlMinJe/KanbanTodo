@@ -1,14 +1,14 @@
-import { type FORM_ERRORS, type SCHEDULE_PAYLOAD, type STATUS_TYPE } from '@/entities/todo'
+import type { FORM_ERRORS, SCHEDULE_PAYLOAD, STATUS_TYPE } from '@/entities/todo'
 import { toISO } from '@/shared/lib'
 
 export const makeCoreErrors = (
   title: string,
-  taskStatus: STATUS_TYPE | '',
+  status: STATUS_TYPE | '',
   priority: string
 ): FORM_ERRORS => {
   const e: FORM_ERRORS = {}
   if (!title.trim()) e.title = '제목을 입력하세요.'
-  if (!taskStatus) e.taskStatus = '작업 상태를 선택하세요.'
+  if (!status) e.status = '작업 상태를 선택하세요.'
   if (!priority) e.priority = '작업 순위를 선택하세요.'
   return e
 }

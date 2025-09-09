@@ -23,9 +23,11 @@ export default function EditDialog(props: EDIT_DIALOG_PROPS & { onSuccess?: () =
     <div>
       {variant === 'todo' && <Hold reason={reason} setReason={setReason} />}
 
-      {variant === 'hold' && <Hold reason={reason} setReason={setReason} />}
+      {variant === 'doing' && <Hold reason={reason} setReason={setReason} />}
 
-      {variant === 'complete' && (
+      {variant === 'defer' && <Hold reason={reason} setReason={setReason} />}
+
+      {variant === 'done' && (
         <Complete mood={mood} setMood={setMood} note={note} setNote={setNote} />
       )}
 

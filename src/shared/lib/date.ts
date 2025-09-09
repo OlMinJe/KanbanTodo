@@ -4,7 +4,6 @@ export function fmt(d: DateInput, fallback = ''): string {
   if (d == null) return fallback
   const date = d instanceof Date ? d : new Date(d)
   if (Number.isNaN(date.getTime())) return fallback
-  // 필요하면 포맷 커스터마이즈 (예: date-fns format 사용)
   return date.toISOString().slice(0, 10) // YYYY-MM-DD
 }
 

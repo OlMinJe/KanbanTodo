@@ -1,9 +1,5 @@
-import {
-  type FORM_ERRORS,
-  type STATUS_TYPE,
-  type TODO_FORM_FIELDS,
-  type TODO_FORM_STORE,
-} from '@/entities/todo'
+import type { FORM_ERRORS, PRIORITY_TYPE, STATUS_TYPE } from '@/entities/todo'
+import type { INIT_OPTION, TODO_FORM_FIELDS, TODO_FORM_STORE } from '@/features/todoDialog'
 import {
   INITIAL_STATE,
   buildSchedule,
@@ -18,7 +14,7 @@ type Field = keyof TODO_FORM_FIELDS
 
 const ERROR_CLEAR_MAP: Partial<Record<Field, ErrorKey[]>> = {
   title: ['title'],
-  taskStatus: ['taskStatus'],
+  status: ['status'],
   priority: ['priority'],
   isRange: ['date', 'time', 'dateStart', 'timeStart', 'dateEnd', 'timeEnd', 'range'],
   dateSingle: ['date'],
@@ -29,29 +25,35 @@ const ERROR_CLEAR_MAP: Partial<Record<Field, ErrorKey[]>> = {
   timeEnd: ['timeEnd', 'range'],
 }
 
+const toDate = (v: unknown): Date | null => (v ? new Date(v as any) : null)
+
 export const todoFormStore = createStore<TODO_FORM_STORE>()(
   persist(
     (set, get) => ({
       ...INITIAL_STATE,
 
-      // init
-      init: ({ mode, initial }) =>
-        set((s) => ({
+      init: ({ mode, initial }: INIT_OPTION) =>
+        set((s: TODO_FORM_STORE) => ({
           ...INITIAL_STATE,
           mode,
           title: initial?.title ?? '',
-          taskStatus: initial?.taskStatus ?? '',
-          priority: initial?.priority ?? '',
+          status: (initial?.status ?? '') as TODO_FORM_STORE['status'],
+          priority: (initial?.priority ?? '') as TODO_FORM_STORE['priority'],
           description: initial?.description ?? '',
-          dateSingle: initial?.date ?? null,
+          dateSingle: toDate(initial?.date),
           timeSingle: initial?.time ?? s.timeSingle,
+          dateStart: toDate(initial?.dateStart),
+          timeStart: initial?.timeStart ?? s.timeStart,
+          dateEnd: toDate(initial?.dateEnd),
+          timeEnd: initial?.timeEnd ?? s.timeEnd,
         })),
 
       errors: {},
       resetErrors: () => set({ errors: {} }),
+      resetToInitial: () => set(() => ({ ...INITIAL_STATE })),
 
       clearErrors: (keys: (keyof FORM_ERRORS)[]) =>
-        set((s) => {
+        set((s: TODO_FORM_STORE) => {
           if (!keys?.length) return s
           const next = { ...s.errors }
           keys.forEach((k) => {
@@ -61,18 +63,17 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()(
         }),
 
       setField: <K extends Field>(key: K, value: TODO_FORM_FIELDS[K]) =>
-        set((s) => {
+        set((s: TODO_FORM_STORE) => {
           const nextErrors = { ...s.errors }
           const toClear = ERROR_CLEAR_MAP[key] ?? []
           toClear.forEach((ek) => {
             if (ek in nextErrors) delete (nextErrors as any)[ek]
           })
-          return { ...(s as any), [key]: value, errors: nextErrors } as TODO_FORM_STORE
+          return { ...(s as any), [key]: value, errors: nextErrors }
         }),
 
-      // 일괄 setter
-      setFields: (partial) =>
-        set((s) => {
+      setFields: (partial: Partial<TODO_FORM_FIELDS>) =>
+        set((s: TODO_FORM_STORE) => {
           const nextErrors = { ...s.errors }
           ;(Object.keys(partial) as Field[]).forEach((k) => {
             const toClear = ERROR_CLEAR_MAP[k] ?? []
@@ -80,31 +81,31 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()(
               if (ek in nextErrors) delete (nextErrors as any)[ek]
             })
           })
-          return { ...(s as any), ...(partial as any), errors: nextErrors } as TODO_FORM_STORE
+          return { ...(s as any), ...(partial as any), errors: nextErrors }
         }),
 
-      // 개별 setter(내부 위임용)
-      setTitle: (v) => get().setField('title', v),
-      setTaskStatus: (v) => get().setField('taskStatus', v),
-      setPriority: (v) => get().setField('priority', v),
-      setDescription: (v) => get().setField('description', v),
-      setIsRange: (b) => get().setField('isRange', b),
-      setDateSingle: (d) => get().setField('dateSingle', d),
-      setTimeSingle: (v) => get().setField('timeSingle', v),
-      setDateStart: (d) => get().setField('dateStart', d),
-      setTimeStart: (v) => get().setField('timeStart', v),
-      setDateEnd: (d) => get().setField('dateEnd', d),
-      setTimeEnd: (v) => get().setField('timeEnd', v),
+      // 개별 setter (타입 일치)
+      setTitle: (v: string) => get().setField('title', v),
+      setStatus: (v: STATUS_TYPE | '') => get().setField('status', v),
+      setPriority: (v: PRIORITY_TYPE | '') => get().setField('priority', v),
+      setDescription: (v: string) => get().setField('description', v),
+      setIsRange: (b: boolean) => get().setField('isRange', b),
+      setDateSingle: (d: Date | null) => get().setField('dateSingle', d),
+      setTimeSingle: (v: string) => get().setField('timeSingle', v),
+      setDateStart: (d: Date | null) => get().setField('dateStart', d),
+      setTimeStart: (v: string) => get().setField('timeStart', v),
+      setDateEnd: (d: Date | null) => get().setField('dateEnd', d),
+      setTimeEnd: (v: string) => get().setField('timeEnd', v),
 
       // dialog
       openEditForStatus: (variant?: STATUS_TYPE) =>
-        set({ editVariant: variant ?? get().editVariant, editOpen: true }),
+        set({ editVariant: (variant ?? get().editVariant) as STATUS_TYPE, editOpen: true }),
       closeEdit: () => set({ editOpen: false }),
 
       // validate
       validateCore: () => {
         const s = get()
-        const next = makeCoreErrors(s.title, s.taskStatus, s.priority)
+        const next = makeCoreErrors(s.title, s.status, s.priority)
         set({ errors: { ...s.errors, ...next } })
         return Object.keys(next).length === 0
       },
@@ -138,7 +139,7 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()(
         )
         return {
           title: s.title,
-          taskStatus: s.taskStatus,
+          status: s.status,
           priority: s.priority,
           description: s.description,
           mode: s.mode,
@@ -150,22 +151,19 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()(
       name: '@kanban/todoForm',
       version: 1,
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({
+      partialize: (s: TODO_FORM_STORE) => ({
         mode: s.mode,
         title: s.title,
-        taskStatus: s.taskStatus,
+        status: s.status,
         priority: s.priority,
         description: s.description,
         isRange: s.isRange,
-        dateSingle: s.dateSingle,
         timeSingle: s.timeSingle,
-        dateStart: s.dateStart,
         timeStart: s.timeStart,
-        dateEnd: s.dateEnd,
         timeEnd: s.timeEnd,
         editVariant: s.editVariant,
       }),
-      migrate: (persisted, _version) => persisted as any,
+      migrate: (persisted) => persisted as any,
     }
   )
 )

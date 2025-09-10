@@ -14,4 +14,4 @@ export const TODO_PRIORITY = {
   P3: 'P3',
 } as const satisfies Record<string, PRIORITY_TYPE>
 
-export const TODO_KEY = import.meta.env.VITE_STORAGE_TODO_KEY
+export const TODO_KEY = '@kanban/todos'

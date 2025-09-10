@@ -21,7 +21,7 @@ export function todoCreateDTO(p: SUBMIT_PAYLOAD): TODO {
 
   if (p.schedule.type === 'single') {
     const { date, time } = fromISO(p.schedule.at!)
-    return { ...base, isRange: false, date, time }
+    return { ...base, isRange: false, dateSingle: date, timeSingle: time }
   }
 
   const s = fromISO(p.schedule.start!)
@@ -29,10 +29,10 @@ export function todoCreateDTO(p: SUBMIT_PAYLOAD): TODO {
   return {
     ...base,
     isRange: true,
-    startDate: s.date,
-    startTime: s.time,
-    endDate: e.date,
-    endTime: e.time,
+    dateStart: s.date,
+    timeStart: s.time,
+    dateEnd: e.date,
+    timeEnd: e.time,
   }
 }
 
@@ -53,12 +53,12 @@ export function normalizeUpdateFromPayload(base: TODO, p: SUBMIT_PAYLOAD): TODO 
     next = {
       ...next,
       isRange: false,
-      date,
-      time,
-      startDate: undefined,
-      startTime: undefined,
-      endDate: undefined,
-      endTime: undefined,
+      dateSingle: date,
+      timeSingle: time,
+      dateStart: undefined,
+      timeStart: undefined,
+      dateEnd: undefined,
+      timeEnd: undefined,
     }
   } else {
     const s = fromISO(p.schedule.start!)
@@ -66,12 +66,12 @@ export function normalizeUpdateFromPayload(base: TODO, p: SUBMIT_PAYLOAD): TODO 
     next = {
       ...next,
       isRange: true,
-      startDate: s.date,
-      startTime: s.time,
-      endDate: e.date,
-      endTime: e.time,
-      date: undefined,
-      time: undefined,
+      dateStart: s.date,
+      timeStart: s.time,
+      dateEnd: e.date,
+      timeEnd: e.time,
+      dateSingle: undefined,
+      timeSingle: undefined,
     }
   }
 

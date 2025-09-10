@@ -1,18 +1,40 @@
-import type { FORM_ERRORS, PRIORITY_TYPE, STATUS_TYPE } from '@/entities/todo'
-import type { INIT_OPTION, TODO_FORM_FIELDS, TODO_FORM_STORE } from '@/features/todoDialog'
+import type { PRIORITY_TYPE, STATUS_TYPE, TODO } from '@/entities/todo'
+import { getTodo } from '@/entities/todo/api'
 import {
-  INITIAL_STATE,
   buildSchedule,
+  INITIAL_STATE,
   makeCoreErrors,
   makeScheduleErrors,
 } from '@/features/todoDialog'
-import { createJSONStorage, persist } from 'zustand/middleware'
 import { createStore } from 'zustand/vanilla'
 
-type ErrorKey = keyof FORM_ERRORS
-type Field = keyof TODO_FORM_FIELDS
+export type INIT_OPTION = { mode: 'create' } | { mode: 'update'; id: string }
 
-const ERROR_CLEAR_MAP: Partial<Record<Field, ErrorKey[]>> = {
+export type TODO_FORM_STORE = typeof INITIAL_STATE & {
+  init: (opt: INIT_OPTION) => Promise<void> | void
+  resetErrors: () => void
+  resetToInitial: () => void
+  clearErrors: (keys: (keyof (typeof INITIAL_STATE)['errors'])[]) => void
+  setField: <K extends keyof Omit<TODO, 'id' | 'tags' | 'createdAt' | 'updatedAt'>>(
+    k: K,
+    v: any
+  ) => void
+  setFields: (partial: Partial<any>) => void
+  openEditForStatus: (variant?: STATUS_TYPE) => void
+  closeEdit: () => void
+  validateCore: () => boolean
+  validateSchedule: () => boolean
+  buildPayload: () => {
+    title: string
+    status?: STATUS_TYPE | ''
+    priority?: PRIORITY_TYPE | ''
+    description?: string | null
+    mode: 'create' | 'update'
+    schedule: ReturnType<typeof buildSchedule>
+  }
+}
+
+const ERROR_CLEAR_MAP: Partial<Record<keyof TODO, (keyof (typeof INITIAL_STATE)['errors'])[]>> = {
   title: ['title'],
   status: ['status'],
   priority: ['priority'],
@@ -25,145 +47,127 @@ const ERROR_CLEAR_MAP: Partial<Record<Field, ErrorKey[]>> = {
   timeEnd: ['timeEnd', 'range'],
 }
 
-const toDate = (v: unknown): Date | null => (v ? new Date(v as any) : null)
+export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
+  ...INITIAL_STATE,
 
-export const todoFormStore = createStore<TODO_FORM_STORE>()(
-  persist(
-    (set, get) => ({
-      ...INITIAL_STATE,
+  init: async (opt: INIT_OPTION) => {
+    set(() => ({ ...INITIAL_STATE, mode: opt.mode }))
 
-      init: ({ mode, initial }: INIT_OPTION) =>
-        set((s: TODO_FORM_STORE) => ({
-          ...INITIAL_STATE,
-          mode,
-          title: initial?.title ?? '',
-          status: (initial?.status ?? '') as TODO_FORM_STORE['status'],
-          priority: (initial?.priority ?? '') as TODO_FORM_STORE['priority'],
-          description: initial?.description ?? '',
-          dateSingle: toDate(initial?.date),
-          timeSingle: initial?.time ?? s.timeSingle,
-          dateStart: toDate(initial?.dateStart),
-          timeStart: initial?.timeStart ?? s.timeStart,
-          dateEnd: toDate(initial?.dateEnd),
-          timeEnd: initial?.timeEnd ?? s.timeEnd,
-        })),
-
-      errors: {},
-      resetErrors: () => set({ errors: {} }),
-      resetToInitial: () => set(() => ({ ...INITIAL_STATE })),
-
-      clearErrors: (keys: (keyof FORM_ERRORS)[]) =>
-        set((s: TODO_FORM_STORE) => {
-          if (!keys?.length) return s
-          const next = { ...s.errors }
-          keys.forEach((k) => {
-            if (k in next) delete (next as any)[k]
-          })
-          return { ...s, errors: next }
-        }),
-
-      setField: <K extends Field>(key: K, value: TODO_FORM_FIELDS[K]) =>
-        set((s: TODO_FORM_STORE) => {
-          const nextErrors = { ...s.errors }
-          const toClear = ERROR_CLEAR_MAP[key] ?? []
-          toClear.forEach((ek) => {
-            if (ek in nextErrors) delete (nextErrors as any)[ek]
-          })
-          return { ...(s as any), [key]: value, errors: nextErrors }
-        }),
-
-      setFields: (partial: Partial<TODO_FORM_FIELDS>) =>
-        set((s: TODO_FORM_STORE) => {
-          const nextErrors = { ...s.errors }
-          ;(Object.keys(partial) as Field[]).forEach((k) => {
-            const toClear = ERROR_CLEAR_MAP[k] ?? []
-            toClear.forEach((ek) => {
-              if (ek in nextErrors) delete (nextErrors as any)[ek]
-            })
-          })
-          return { ...(s as any), ...(partial as any), errors: nextErrors }
-        }),
-
-      // 개별 setter (타입 일치)
-      setTitle: (v: string) => get().setField('title', v),
-      setStatus: (v: STATUS_TYPE | '') => get().setField('status', v),
-      setPriority: (v: PRIORITY_TYPE | '') => get().setField('priority', v),
-      setDescription: (v: string) => get().setField('description', v),
-      setIsRange: (b: boolean) => get().setField('isRange', b),
-      setDateSingle: (d: Date | null) => get().setField('dateSingle', d),
-      setTimeSingle: (v: string) => get().setField('timeSingle', v),
-      setDateStart: (d: Date | null) => get().setField('dateStart', d),
-      setTimeStart: (v: string) => get().setField('timeStart', v),
-      setDateEnd: (d: Date | null) => get().setField('dateEnd', d),
-      setTimeEnd: (v: string) => get().setField('timeEnd', v),
-
-      // dialog
-      openEditForStatus: (variant?: STATUS_TYPE) =>
-        set({ editVariant: (variant ?? get().editVariant) as STATUS_TYPE, editOpen: true }),
-      closeEdit: () => set({ editOpen: false }),
-
-      // validate
-      validateCore: () => {
-        const s = get()
-        const next = makeCoreErrors(s.title, s.status, s.priority)
-        set({ errors: { ...s.errors, ...next } })
-        return Object.keys(next).length === 0
-      },
-
-      validateSchedule: () => {
-        const s = get()
-        const next = makeScheduleErrors(
-          s.isRange,
-          s.dateSingle,
-          s.timeSingle,
-          s.dateStart,
-          s.timeStart,
-          s.dateEnd,
-          s.timeEnd
-        )
-        set({ errors: { ...s.errors, ...next } })
-        return Object.values(next).every((v) => !v)
-      },
-
-      // payload
-      buildPayload: () => {
-        const s = get()
-        const schedule = buildSchedule(
-          s.isRange,
-          s.dateSingle,
-          s.timeSingle,
-          s.dateStart,
-          s.timeStart,
-          s.dateEnd,
-          s.timeEnd
-        )
-        return {
-          title: s.title,
-          status: s.status,
-          priority: s.priority,
-          description: s.description,
-          mode: s.mode,
-          schedule,
-        }
-      },
-    }),
-    {
-      name: '@kanban/todoForm',
-      version: 1,
-      storage: createJSONStorage(() => localStorage),
-      partialize: (s: TODO_FORM_STORE) => ({
-        mode: s.mode,
-        title: s.title,
-        status: s.status,
-        priority: s.priority,
-        description: s.description,
-        isRange: s.isRange,
-        timeSingle: s.timeSingle,
-        timeStart: s.timeStart,
-        timeEnd: s.timeEnd,
-        editVariant: s.editVariant,
-      }),
-      migrate: (persisted) => persisted as any,
+    if (opt.mode === 'update') {
+      const rec = await getTodo(opt.id)
+      if (!rec) return
+      set((s) => ({
+        ...s,
+        mode: 'update',
+        title: rec.title ?? '',
+        status: rec.status ?? '',
+        priority: rec.priority ?? '',
+        description: rec.description ?? '',
+        isRange: !!rec.isRange,
+        dateSingle: rec.dateSingle ? new Date(rec.dateSingle) : null,
+        timeSingle: rec.timeSingle ?? '',
+        dateStart: rec.dateStart ? new Date(rec.dateStart) : null,
+        timeStart: rec.timeStart ?? '',
+        dateEnd: rec.dateEnd ? new Date(rec.dateEnd) : null,
+        timeEnd: rec.timeEnd ?? '',
+        errors: {},
+        editVariant: rec.status,
+      }))
     }
-  )
-)
+
+    if (opt.mode === 'create') {
+      const hhmm = new Date().toISOString().substring(11, 16)
+      set((s) => ({
+        ...s,
+        status: s.status || 'todo',
+        priority: s.priority || 'P2',
+        isRange: false,
+        dateSingle: s.dateSingle ?? new Date(),
+        timeSingle: s.timeSingle || hhmm,
+        errors: {},
+      }))
+    }
+  },
+
+  resetErrors: () => set({ errors: {} }),
+  resetToInitial: () => set(() => ({ ...INITIAL_STATE })),
+
+  clearErrors: (keys) =>
+    set((s) => {
+      if (!keys?.length) return s
+      const next = { ...s.errors }
+      keys.forEach((k) => {
+        if (k in next) delete (next as any)[k]
+      })
+      return { ...s, errors: next }
+    }),
+
+  setField: (key, value) =>
+    set((s: any) => {
+      const nextErrors = { ...s.errors }
+      const toClear = ERROR_CLEAR_MAP[key as keyof TODO] ?? []
+      toClear.forEach((ek) => {
+        if (ek in nextErrors) delete (nextErrors as any)[ek]
+      })
+      return { ...s, [key]: value, errors: nextErrors }
+    }),
+
+  setFields: (partial) =>
+    set((s: any) => {
+      const nextErrors = { ...s.errors }
+      Object.keys(partial).forEach((k) => {
+        const toClear = ERROR_CLEAR_MAP[k as keyof TODO] ?? []
+        toClear.forEach((ek) => {
+          if (ek in nextErrors) delete (nextErrors as any)[ek]
+        })
+      })
+      return { ...s, ...partial, errors: nextErrors }
+    }),
+
+  openEditForStatus: (variant) =>
+    set({ editVariant: variant ?? get().editVariant, editOpen: true }),
+  closeEdit: () => set({ editOpen: false }),
+
+  validateCore: () => {
+    const s = get()
+    const next = makeCoreErrors(s.title, s.status, s.priority)
+    set({ errors: { ...s.errors, ...next } })
+    return Object.keys(next).length === 0
+  },
+
+  validateSchedule: () => {
+    const s = get()
+    const next = makeScheduleErrors(
+      s.isRange,
+      s.dateSingle,
+      s.timeSingle,
+      s.dateStart,
+      s.timeStart,
+      s.dateEnd,
+      s.timeEnd
+    )
+    set({ errors: { ...s.errors, ...next } })
+    return Object.values(next).every((v) => !v)
+  },
+
+  buildPayload: () => {
+    const s = get()
+    const schedule = buildSchedule(
+      s.isRange,
+      s.dateSingle,
+      s.timeSingle,
+      s.dateStart,
+      s.timeStart,
+      s.dateEnd,
+      s.timeEnd
+    )
+    return {
+      title: s.title,
+      status: s.status,
+      priority: s.priority,
+      description: s.description,
+      mode: s.mode,
+      schedule,
+    }
+  },
+}))

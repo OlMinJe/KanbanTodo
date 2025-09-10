@@ -5,10 +5,10 @@ export type KanbanReadData = {
   priority: string
   singleDate?: string
   singleTime?: string
-  rangeStartDate?: string
-  rangeStartTime?: string
-  rangeEndDate?: string
-  rangeEndTime?: string
+  rangedateStart?: string
+  rangetimeStart?: string
+  rangedateEnd?: string
+  rangetimeEnd?: string
   description?: string
 }
 
@@ -36,12 +36,12 @@ export default function TodoFormRead({ data }: { data: KanbanReadData }) {
 
         <div className="flex gap-5">
           <div className="flex gap-4">
-            <ReadField label="시작 날짜" value={data.rangeStartDate ?? '-'} />
-            <ReadField label="시작 시간" value={data.rangeStartTime ?? '-'} />
+            <ReadField label="시작 날짜" value={data.rangedateStart ?? '-'} />
+            <ReadField label="시작 시간" value={data.rangetimeStart ?? '-'} />
           </div>
           <div className="flex gap-4">
-            <ReadField label="종료 날짜" value={data.rangeEndDate ?? '-'} />
-            <ReadField label="종료 시간" value={data.rangeEndTime ?? '-'} />
+            <ReadField label="종료 날짜" value={data.rangedateEnd ?? '-'} />
+            <ReadField label="종료 시간" value={data.rangetimeEnd ?? '-'} />
           </div>
         </div>
       </section>

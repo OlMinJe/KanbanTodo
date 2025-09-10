@@ -31,17 +31,17 @@ export type TODO = {
   priority: PRIORITY_TYPE
   description: string | null
   isRange: boolean
-  tags: string[]
+  tags: []
   createdAt: string // ISO
   updatedAt: string // ISO
   // single
-  date?: string
-  time?: string
+  dateSingle?: string
+  timeSingle?: string
   // range
-  startDate?: string
-  startTime?: string
-  endDate?: string
-  endTime?: string
+  dateStart?: string
+  timeStart?: string
+  dateEnd?: string
+  timeEnd?: string
 }
 
 export type FORM_ERRORS = Partial<

@@ -1,3 +1,4 @@
+export * from '@/widgets/todoBoard/lib/theme'
 export * from '@/widgets/todoBoard/model/mock'
 
 // ui

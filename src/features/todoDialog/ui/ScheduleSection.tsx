@@ -1,10 +1,11 @@
-import type { TODO } from '@/entities/todo'
+import type { FORM_ERRORS, TODO } from '@/entities/todo'
 import { DatePopover, useTodoFormStore } from '@/features/todoDialog'
 import { InputField } from '@/shared/ui/form'
 import { Switch } from '@/shared/ui/shadcn'
-import { useEffect, type ChangeEvent } from 'react'
+import { type ChangeEvent } from 'react'
 
-export default function ScheduleSection({ todo }: { todo: TODO }) {
+export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERRORS }) {
+  const { errors = {} } = props
   const {
     isRange,
     dateSingle,
@@ -13,32 +14,9 @@ export default function ScheduleSection({ todo }: { todo: TODO }) {
     timeStart,
     dateEnd,
     timeEnd,
-    errors,
     setField,
     clearErrors,
-  } = useTodoFormStore((s) => ({
-    isRange: s.isRange,
-    dateSingle: s.dateSingle,
-    timeSingle: s.timeSingle,
-    dateStart: s.dateStart,
-    timeStart: s.timeStart,
-    dateEnd: s.dateEnd,
-    timeEnd: s.timeEnd,
-    errors: s.errors,
-    setField: s.setField,
-    clearErrors: s.clearErrors,
-  }))
-
-  useEffect(() => {
-    if (!todo?.id) return
-    if (todo.isRange != null) setField('isRange', !!todo.isRange)
-    if (todo.date) setField('dateSingle', new Date(todo.date))
-    if (todo.time) setField('timeSingle', todo.time)
-    if (todo.startDate) setField('dateStart', new Date(todo.startDate))
-    if (todo.startTime) setField('timeStart', todo.startTime)
-    if (todo.endDate) setField('dateEnd', new Date(todo.endDate))
-    if (todo.endTime) setField('timeEnd', todo.endTime)
-  }, [todo?.id])
+  } = useTodoFormStore((s) => s)
 
   return (
     <fieldset className="mt-4 space-y-3">

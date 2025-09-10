@@ -1,33 +1,23 @@
-import { listTodos, type TODO, TODO_STATUS } from '@/entities/todo'
+import { type TODO, TODO_STATUS, useTodoStore } from '@/entities/todo'
+import type { STATUS_TYPE } from '@/entities/todo/types'
 import { STATUS_LABELS } from '@/features/todoDialog'
 import { Card, Column, Menu } from '@/widgets/todoBoard'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 export default function Board() {
-  const [todos, setTodos] = useState<TODO[]>([])
+  const todos = useTodoStore((s) => s.items)
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await listTodos()
-        setTodos(res)
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    fetchData()
-  }, [])
-
-  // 상태별 그룹핑
   const byStatus = useMemo(() => {
-    const g: Record<(typeof TODO_STATUS)[keyof typeof TODO_STATUS], TODO[]> = {
+    const g: Record<STATUS_TYPE, TODO[]> = {
       [TODO_STATUS.TODO]: [],
-      [TODO_STATUS.IN_PROGRESS]: [],
-      [TODO_STATUS.HOLD]: [],
+      [TODO_STATUS.DOING]: [],
+      [TODO_STATUS.DONE]: [],
+      [TODO_STATUS.DEFER]: [],
       [TODO_STATUS.REMOVE]: [],
-      [TODO_STATUS.COMPLETE]: [],
     }
-    for (const t of todos) g[t.status]?.push(t)
+    for (const t of todos) {
+      g[t.status].push(t)
+    }
     return g
   }, [todos])
 
@@ -48,14 +38,14 @@ export default function Board() {
         )}
       </Column>
 
-      {/* 진행중 */}
+      {/* 진행중 (DOING) */}
       <Column
-        title={STATUS_LABELS[TODO_STATUS.IN_PROGRESS]}
-        status={TODO_STATUS.IN_PROGRESS}
-        count={String(byStatus[TODO_STATUS.IN_PROGRESS].length)}
+        title={STATUS_LABELS[TODO_STATUS.DOING]}
+        status={TODO_STATUS.DOING}
+        count={String(byStatus[TODO_STATUS.DOING].length)}
       >
-        {byStatus[TODO_STATUS.IN_PROGRESS].length > 0 ? (
-          byStatus[TODO_STATUS.IN_PROGRESS].map((t) => (
+        {byStatus[TODO_STATUS.DOING].length > 0 ? (
+          byStatus[TODO_STATUS.DOING].map((t) => (
             <Card key={t.id} todo={t} renderMenu={<Menu todo={t} />} />
           ))
         ) : (
@@ -63,14 +53,14 @@ export default function Board() {
         )}
       </Column>
 
-      {/* 보류 */}
+      {/* 보류 (DEFER) */}
       <Column
-        title={STATUS_LABELS[TODO_STATUS.HOLD]}
-        status={TODO_STATUS.HOLD}
-        count={String(byStatus[TODO_STATUS.HOLD].length)}
+        title={STATUS_LABELS[TODO_STATUS.DEFER]}
+        status={TODO_STATUS.DEFER}
+        count={String(byStatus[TODO_STATUS.DEFER].length)}
       >
-        {byStatus[TODO_STATUS.HOLD].length > 0 ? (
-          byStatus[TODO_STATUS.HOLD].map((t) => (
+        {byStatus[TODO_STATUS.DEFER].length > 0 ? (
+          byStatus[TODO_STATUS.DEFER].map((t) => (
             <Card key={t.id} todo={t} renderMenu={<Menu todo={t} />} />
           ))
         ) : (
@@ -78,14 +68,14 @@ export default function Board() {
         )}
       </Column>
 
-      {/* 완료 */}
+      {/* 완료 (DONE) */}
       <Column
-        title={STATUS_LABELS[TODO_STATUS.COMPLETE]}
-        status={TODO_STATUS.COMPLETE}
-        count={String(byStatus[TODO_STATUS.COMPLETE].length)}
+        title={STATUS_LABELS[TODO_STATUS.DONE]}
+        status={TODO_STATUS.DONE}
+        count={String(byStatus[TODO_STATUS.DONE].length)}
       >
-        {byStatus[TODO_STATUS.COMPLETE].length > 0 ? (
-          byStatus[TODO_STATUS.COMPLETE].map((t) => (
+        {byStatus[TODO_STATUS.DONE].length > 0 ? (
+          byStatus[TODO_STATUS.DONE].map((t) => (
             <Card key={t.id} todo={t} renderMenu={<Menu todo={t} />} />
           ))
         ) : (

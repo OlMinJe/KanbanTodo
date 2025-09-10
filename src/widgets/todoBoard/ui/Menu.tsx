@@ -9,7 +9,7 @@ export default function Menu({ todo }: { todo: TODO }) {
 
   const confirmRemove = async () => {
     const ok = await removeTodo(todo.id)
-    console.log('remove', ok)
+    console.log(ok)
   }
 
   return (
@@ -26,7 +26,7 @@ export default function Menu({ todo }: { todo: TODO }) {
             des={PROPS_INFO.update.description}
             trigger={<Shadcn.MenubarItem onSelect={prevent}>수정하기</Shadcn.MenubarItem>}
           >
-            {({ close }) => <TodoForm type="update" onCancel={close} todo={todo} />}
+            {({ close }) => <TodoForm type="update" onCancel={close} todoId={todo.id} />}
           </BaseDialog>
           <Shadcn.MenubarItem onSelect={prevent}>복사하기(추후)</Shadcn.MenubarItem>
           <Shadcn.MenubarSeparator />

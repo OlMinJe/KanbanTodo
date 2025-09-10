@@ -1,4 +1,3 @@
-import type { TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import { TodoForm } from '@/features/todoDialog'
 import { Funnel, Plus } from 'lucide-react'
@@ -14,7 +13,7 @@ export default function TodoToolbar() {
             <Plus size={18} />
           </button>
         }
-        render={({ close }) => <TodoForm type="create" onCancel={close} todo={{} as TODO} />}
+        render={({ close }) => <TodoForm type="create" onCancel={close} />}
       />
     </div>
   )

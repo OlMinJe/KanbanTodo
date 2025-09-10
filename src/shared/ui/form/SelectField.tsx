@@ -1,15 +1,32 @@
-import { BaseField, type OPTION, type TRIGGER_PROPS } from '@/shared/ui/form'
+import { BaseField, type FIELD_COMMON_PROPS, type OPTION } from '@/shared/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/shadcn'
+import cn from 'clsx'
 
-type SELECT_FIELD_BASE_RPOPS = TRIGGER_PROPS & {
-  options: ReadonlyArray<OPTION>
-  value: string
-  onValueChange: (v: string) => void
+type SELECT_FIELD_PROPS = FIELD_COMMON_PROPS & {
+  options: OPTION[]
+  value?: string | null
+  onValueChange?: (v: string) => void
+  placeholder?: string
+  triggerClassName?: string
 }
 
-export default function SelectField(props: SELECT_FIELD_BASE_RPOPS) {
-  const { id, name, label, required, hint, error, placeholder, ...restProps } = props
-  const { containerClassName, triggerClassName, options, value, onValueChange, ...rest } = restProps
+export default function SelectField(props: SELECT_FIELD_PROPS) {
+  const {
+    id,
+    name,
+    label,
+    required,
+    hint,
+    error,
+    containerClassName,
+    options,
+    value,
+    onValueChange,
+    placeholder,
+    triggerClassName,
+  } = props
+
+  const controlledValue = (value ?? undefined) as string | undefined
 
   return (
     <BaseField
@@ -22,13 +39,13 @@ export default function SelectField(props: SELECT_FIELD_BASE_RPOPS) {
       containerClassName={containerClassName}
     >
       {(common) => (
-        <Select onValueChange={onValueChange} defaultValue={value} {...rest}>
-          <SelectTrigger className={triggerClassName} {...common}>
+        <Select value={controlledValue} onValueChange={(v) => onValueChange?.(v)}>
+          <SelectTrigger className={cn('w-[160px]', triggerClassName)} {...common}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
             {options.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem key={String(opt.value)} value={String(opt.value)}>
                 {opt.label}
               </SelectItem>
             ))}

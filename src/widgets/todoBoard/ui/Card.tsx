@@ -39,7 +39,7 @@ export default function Card({ todo, renderMenu }: Props) {
             <span />
           )}
 
-          <span className="text-xs text-gray-500">P{todo.priority}</span>
+          <span className="text-xs text-gray-500">{todo.priority}</span>
         </div>
       </Shadcn.CardContent>
     </Shadcn.Card>

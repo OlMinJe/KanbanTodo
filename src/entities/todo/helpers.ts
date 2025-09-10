@@ -28,11 +28,20 @@ export function todoCreateDTO(p: SUBMIT_PAYLOAD): TODO {
   const e = fromISO(p.schedule.end!)
   return {
     ...base,
+    createdAt: now,
+    updatedAt: now,
     isRange: true,
     dateStart: s.date,
     timeStart: s.time,
     dateEnd: e.date,
     timeEnd: e.time,
+    history: [
+      {
+        at: now,
+        from: status,
+        to: status,
+      },
+    ],
   }
 }
 

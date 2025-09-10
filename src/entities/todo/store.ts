@@ -1,4 +1,4 @@
-import type { SUBMIT_PAYLOAD, TODO } from '@/entities/todo'
+import type { SUBMIT_PAYLOAD, TODO, TODO_HISTORY } from '@/entities/todo'
 import { normalizeUpdateFromPayload, TODO_KEY, todoCreateDTO } from '@/entities/todo'
 import { create } from 'zustand'
 import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware'
@@ -10,7 +10,10 @@ type TodoState = {
 type TodoActions = {
   createFromPayload: (payload: SUBMIT_PAYLOAD) => TODO
   updateFromPayload: (id: string, payload: SUBMIT_PAYLOAD) => TODO | undefined
-  updateTodo: (id: string, patch: Partial<TODO>) => TODO | undefined
+  updateTodo: (
+    id: string,
+    patch: Partial<TODO> & { meta?: TODO_HISTORY['meta'] }
+  ) => TODO | undefined
   removeTodo: (id: string) => boolean
   getTodo: (id: string) => TODO | undefined
   listTodos: () => TODO[]
@@ -42,10 +45,29 @@ export const useTodoStore = create<TodoState & TodoActions>()(
       updateTodo: (id, patch) => {
         const idx = get().items.findIndex((t) => t.id === id)
         if (idx < 0) return
+
+        const prev = get().items[idx]
+        const now = new Date().toISOString()
+
+        const { meta, ...rest } = patch as { meta?: TODO_HISTORY['meta'] } & Partial<TODO>
+        let next: TODO = {
+          ...prev,
+          ...rest,
+          updatedAt: now,
+        }
+
+        if (patch.status && patch.status !== prev.status) {
+          const entry = {
+            at: now,
+            from: prev.status,
+            to: patch.status,
+            meta: patch.meta,
+          }
+          next.history = [...(prev.history ?? []), entry]
+        }
+
         set((s) => ({
-          items: s.items.map((t, i) =>
-            i === idx ? { ...t, ...patch, updatedAt: new Date().toISOString() } : t
-          ),
+          items: s.items.map((t, i) => (i === idx ? next : t)),
         }))
         return get().items[idx]
       },

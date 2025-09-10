@@ -24,6 +24,18 @@ export type SUBMIT_PAYLOAD = {
   schedule: SCHEDULE
 }
 
+export type TODO_STATUS_META = {
+  reason?: string // 삭제/보류/되돌리기 사유 등
+  mood?: string // 완료 시 선택한 이모지
+}
+
+export type TODO_HISTORY = {
+  at: string // 기록 시각(ISO)
+  from: STATUS_TYPE // 이전 상태
+  to: STATUS_TYPE // 바뀐 상태
+  meta?: TODO_STATUS_META
+}
+
 export type TODO = {
   id: string
   title: string
@@ -34,14 +46,13 @@ export type TODO = {
   tags: []
   createdAt: string // ISO
   updatedAt: string // ISO
-  // single
   dateSingle?: string
   timeSingle?: string
-  // range
   dateStart?: string
   timeStart?: string
   dateEnd?: string
   timeEnd?: string
+  history?: TODO_HISTORY[]
 }
 
 export type FORM_ERRORS = Partial<

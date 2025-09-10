@@ -1,4 +1,4 @@
-import type { SUBMIT_PAYLOAD, TODO } from '@/entities/todo'
+import type { SUBMIT_PAYLOAD, TODO, TODO_HISTORY } from '@/entities/todo'
 import { useTodoStore } from '@/entities/todo'
 
 export async function createTodo(payload: SUBMIT_PAYLOAD): Promise<TODO> {
@@ -15,7 +15,7 @@ export async function getTodo(id: string): Promise<TODO | undefined> {
 
 export async function updateTodo(
   id: string,
-  payload: TODO | Partial<TODO>
+  payload: Partial<TODO> & { meta?: TODO_HISTORY['meta'] }
 ): Promise<TODO | undefined> {
   return useTodoStore.getState().updateTodo(id, payload)
 }

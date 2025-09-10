@@ -5,58 +5,57 @@ import * as Shadcn from '@/shared/ui/shadcn'
 import { Ellipsis, Trash2 } from 'lucide-react'
 
 export default function Menu({ todo }: { todo: TODO }) {
-  const prevent = (e: Event) => e.preventDefault()
-
-  const confirmRemove = async () => {
-    const ok = await removeTodo(todo.id)
-    console.log(ok)
-  }
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation()
 
   return (
-    <Shadcn.Menubar className="bg-transparent border-0 p-0 shadow-none h-auto inline-flex">
-      <Shadcn.MenubarMenu>
-        <Shadcn.MenubarTrigger asChild>
-          <button type="button" aria-label={`menu-${todo.id}`}>
-            <Ellipsis width={18} height={18} />
-          </button>
-        </Shadcn.MenubarTrigger>
-        <Shadcn.MenubarContent>
-          <BaseDialog
-            title={PROPS_INFO.update.title}
-            des={PROPS_INFO.update.description}
-            trigger={<Shadcn.MenubarItem onSelect={prevent}>수정하기</Shadcn.MenubarItem>}
-          >
-            {({ close }) => <TodoForm type="update" onCancel={close} todoId={todo.id} />}
-          </BaseDialog>
-          <Shadcn.MenubarItem onSelect={prevent}>복사하기(추후)</Shadcn.MenubarItem>
-          <Shadcn.MenubarSeparator />
+    <Shadcn.DropdownMenu>
+      <Shadcn.DropdownMenuTrigger asChild>
+        <button type="button" aria-label={`menu-${todo.id}`} onMouseDown={stop} onClick={stop}>
+          <Ellipsis width={18} height={18} />
+        </button>
+      </Shadcn.DropdownMenuTrigger>
 
-          <BaseDialog
-            title={STATUS_DIALOG_TEXT.remove.title}
-            des={STATUS_DIALOG_TEXT.remove.description}
-            trigger={
-              <Shadcn.MenubarItem className="text-red-400" onSelect={prevent}>
-                삭제하기
-                <Shadcn.MenubarShortcut>
-                  <Trash2 />
-                </Shadcn.MenubarShortcut>
-              </Shadcn.MenubarItem>
-            }
-          >
-            {({ close }) => (
-              <EditDialog
-                variant="remove"
-                onCancel={close}
-                todo={todo}
-                onSuccess={async () => {
-                  await confirmRemove()
-                  close()
-                }}
-              />
-            )}
-          </BaseDialog>
-        </Shadcn.MenubarContent>
-      </Shadcn.MenubarMenu>
-    </Shadcn.Menubar>
+      <Shadcn.DropdownMenuContent align="end" sideOffset={4} onMouseDown={stop} onClick={stop}>
+        <BaseDialog
+          title={PROPS_INFO.update.title}
+          des={PROPS_INFO.update.description}
+          trigger={
+            <Shadcn.DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              수정하기
+            </Shadcn.DropdownMenuItem>
+          }
+        >
+          {({ close }) => <TodoForm type="update" onCancel={close} todoId={todo.id} />}
+        </BaseDialog>
+
+        <Shadcn.DropdownMenuItem>복사하기(추후)</Shadcn.DropdownMenuItem>
+        <Shadcn.DropdownMenuSeparator />
+
+        <BaseDialog
+          title={STATUS_DIALOG_TEXT.remove.title}
+          des={STATUS_DIALOG_TEXT.remove.description}
+          trigger={
+            <Shadcn.DropdownMenuItem className="text-red-400" onSelect={(e) => e.preventDefault()}>
+              삭제하기
+              <Shadcn.MenubarShortcut>
+                <Trash2 />
+              </Shadcn.MenubarShortcut>
+            </Shadcn.DropdownMenuItem>
+          }
+        >
+          {({ close }) => (
+            <EditDialog
+              variant="remove"
+              onCancel={close}
+              todo={todo}
+              onSuccess={async () => {
+                await removeTodo(todo.id)
+                close()
+              }}
+            />
+          )}
+        </BaseDialog>
+      </Shadcn.DropdownMenuContent>
+    </Shadcn.DropdownMenu>
   )
 }

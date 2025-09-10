@@ -1,6 +1,7 @@
 import { type TODO, TODO_STATUS, useTodoStore } from '@/entities/todo'
 import type { STATUS_TYPE } from '@/entities/todo/types'
-import { STATUS_LABELS } from '@/features/todoDialog'
+import { BaseDialog } from '@/features/dialog'
+import { STATUS_LABELS, TodoFormRead } from '@/features/todoDialog'
 import { Card, Column, Menu } from '@/widgets/todoBoard'
 import { useMemo } from 'react'
 
@@ -31,7 +32,36 @@ export default function Board() {
       >
         {byStatus[TODO_STATUS.TODO].length > 0 ? (
           byStatus[TODO_STATUS.TODO].map((t) => (
-            <Card key={t.id} todo={t} renderMenu={<Menu todo={t} />} />
+            <BaseDialog
+              key={t.id}
+              title={t.title}
+              des=""
+              trigger={
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className="text-left w-full focus:outline-none"
+                  onClick={(e) => {
+                    const el = e.target as HTMLElement
+                    if (el.closest('[data-card-menu]')) {
+                      e.stopPropagation()
+                      return
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      const el = e.target as HTMLElement
+                      if (el.closest('[data-card-menu]')) return
+                      e.preventDefault()
+                      ;(e.currentTarget as HTMLElement).click()
+                    }
+                  }}
+                >
+                  <Card todo={t} renderMenu={<Menu todo={t} />} />
+                </div>
+              }
+              render={() => <TodoFormRead todoId={t.id} />}
+            />
           ))
         ) : (
           <p>아직 일정이 없습니다!</p>

@@ -5,8 +5,32 @@ import type { InputHTMLAttributes } from 'react'
 type INPUT_FIELD_PROPS = FIELD_COMMON_PROPS & InputHTMLAttributes<HTMLInputElement>
 
 export default function InputField(props: INPUT_FIELD_PROPS) {
-  const { id, name, label, required, hint, error, containerClassName, onChange, value, ...rest } =
-    props
+  const {
+    id,
+    name,
+    label,
+    required,
+    hint,
+    error,
+    containerClassName,
+    value,
+    defaultValue,
+    onChange,
+    ...rest
+  } = props
+
+  const isControlled = value !== undefined
+
+  const normalizedValue =
+    typeof value === 'string' || typeof value === 'number' ? value : (value ?? '')
+
+  const inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    ...(rest as any),
+    ...(isControlled ? { value: normalizedValue } : { defaultValue }),
+    onChange: (e) => {
+      onChange?.(e)
+    },
+  }
 
   return (
     <BaseField
@@ -21,8 +45,7 @@ export default function InputField(props: INPUT_FIELD_PROPS) {
       {(common) => (
         <Input
           {...common}
-          {...rest}
-          value={typeof value === 'string' ? value : (value ?? '')}
+          {...inputProps}
           onChange={(e) => {
             onChange?.(e)
           }}

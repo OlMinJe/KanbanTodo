@@ -1,9 +1,5 @@
-import type { PRIORITY_TYPE, STATUS_TYPE, TODO } from '@/entities/todo'
-import {
-  removeTodo as apiRemoveTodo,
-  updateTodo as apiUpdateTodo,
-  createTodo,
-} from '@/entities/todo'
+import type { PRIORITY_TYPE, STATUS_TYPE, TODO, TODO_STATUS_META } from '@/entities/todo'
+import { updateTodo as apiUpdateTodo, createTodo } from '@/entities/todo'
 import { useTodoFormStore } from '@/features/todoDialog'
 import { fromISO } from '@/shared/lib'
 import { useCallback, type FormEvent } from 'react'
@@ -58,14 +54,15 @@ export function useTodoActions({ todo, onDone }: Params) {
     (base: TODO) => {
       const p = buildPayload()
       const { schedule, title, status, priority, description } = p
-      let next: TODO = {
-        ...base,
+
+      let next: Partial<TODO> = {
         title: title.trim(),
         status: (status || base.status) as STATUS_TYPE,
         priority: (priority || base.priority) as PRIORITY_TYPE,
         description: description?.trim() || null,
         isRange: schedule.type === 'range',
       }
+
       if (schedule.type === 'single') {
         const at = schedule.at ?? new Date().toISOString()
         const { date, time } = fromISO(at)
@@ -111,27 +108,27 @@ export function useTodoActions({ todo, onDone }: Params) {
     [mode, validateCore, validateSchedule, toSubmitPayload, resetErrors, resetToInitial, onDone]
   )
 
-  const confirmUpdate = useCallback(async () => {
-    if (!validateCore() || !validateSchedule() || !todo) return
-    await apiUpdateTodo(todo.id, toUpdatedTodo(todo))
-    closeEdit()
-    resetErrors()
-    resetToInitial()
-    onDone()
-  }, [
-    todo,
-    validateCore,
-    validateSchedule,
-    toUpdatedTodo,
-    closeEdit,
-    resetErrors,
-    resetToInitial,
-    onDone,
-  ])
+  const confirmUpdate = useCallback(
+    async (extra?: TODO_STATUS_META) => {
+      if (!validateCore() || !validateSchedule() || !todo) return
+
+      const patch = toUpdatedTodo(todo)
+      await apiUpdateTodo(todo.id, { ...patch, meta: extra })
+
+      closeEdit()
+      resetErrors()
+      onDone()
+    },
+    [todo, validateCore, validateSchedule, toUpdatedTodo, closeEdit, resetErrors, onDone]
+  )
 
   const confirmRemove = useCallback(async () => {
     if (!todo) return
-    await apiRemoveTodo(todo.id)
+    // await apiRemoveTodo(todo.id)
+    await apiUpdateTodo(todo.id, {
+      status: 'remove',
+      meta: { reason: '사용자가 삭제' },
+    })
     closeEdit()
     resetErrors()
     resetToInitial()

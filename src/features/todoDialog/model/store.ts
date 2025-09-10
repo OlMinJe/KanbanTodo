@@ -1,5 +1,6 @@
-import type { PRIORITY_TYPE, STATUS_TYPE, TODO } from '@/entities/todo'
+import type { TODO } from '@/entities/todo'
 import { getTodo } from '@/entities/todo/api'
+import type { INIT_OPTION, TODO_FORM_STORE } from '@/features/todoDialog'
 import {
   buildSchedule,
   INITIAL_STATE,
@@ -7,32 +8,6 @@ import {
   makeScheduleErrors,
 } from '@/features/todoDialog'
 import { createStore } from 'zustand/vanilla'
-
-export type INIT_OPTION = { mode: 'create' } | { mode: 'update'; id: string }
-
-export type TODO_FORM_STORE = typeof INITIAL_STATE & {
-  init: (opt: INIT_OPTION) => Promise<void> | void
-  resetErrors: () => void
-  resetToInitial: () => void
-  clearErrors: (keys: (keyof (typeof INITIAL_STATE)['errors'])[]) => void
-  setField: <K extends keyof Omit<TODO, 'id' | 'tags' | 'createdAt' | 'updatedAt'>>(
-    k: K,
-    v: any
-  ) => void
-  setFields: (partial: Partial<any>) => void
-  openEditForStatus: (variant?: STATUS_TYPE) => void
-  closeEdit: () => void
-  validateCore: () => boolean
-  validateSchedule: () => boolean
-  buildPayload: () => {
-    title: string
-    status?: STATUS_TYPE | ''
-    priority?: PRIORITY_TYPE | ''
-    description?: string | null
-    mode: 'create' | 'update'
-    schedule: ReturnType<typeof buildSchedule>
-  }
-}
 
 const ERROR_CLEAR_MAP: Partial<Record<keyof TODO, (keyof (typeof INITIAL_STATE)['errors'])[]>> = {
   title: ['title'],

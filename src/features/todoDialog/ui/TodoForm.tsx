@@ -90,7 +90,7 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
             required
             placeholder="제목을 입력하세요"
             containerClassName="min-w-auto"
-            value={title ?? ''} // ✅ 항상 string
+            value={title ?? ''}
             onChange={(e) => setField('title', e.currentTarget.value)}
             error={errors.title}
           />
@@ -103,7 +103,7 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
             placeholder="작업 상태"
             triggerClassName="w-[120px]"
             options={TASK_STATUS_OPTIONS}
-            value={status ?? ''} // ✅ 항상 string
+            value={status ?? ''}
             onValueChange={(v) => setField('status', v as STATUS_TYPE | '')}
             error={errors.status}
           />
@@ -116,7 +116,7 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
             placeholder="작업 순위"
             triggerClassName="w-[120px]"
             options={PRIORITY_OPTIONS}
-            value={priority ?? ''} // ✅ 항상 string
+            value={priority ?? ''}
             onValueChange={(v) => setField('priority', v as PRIORITY_TYPE | '')}
             error={errors.priority}
           />
@@ -198,8 +198,8 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
                       close()
                       closeEdit()
                     }}
-                    onSuccess={async () => {
-                      await confirmUpdate()
+                    onSuccess={async (extra) => {
+                      await confirmUpdate(extra)
                       close()
                     }}
                   />

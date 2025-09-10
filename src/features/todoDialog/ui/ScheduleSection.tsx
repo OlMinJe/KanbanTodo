@@ -62,6 +62,7 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
               clearErrors?.(['time'])
             }}
             error={errors?.time}
+            defaultValue="10:30:00"
           />
         </div>
       )}
@@ -96,6 +97,7 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
                 clearErrors?.(['timeStart', 'range'])
               }}
               error={errors?.timeStart}
+              defaultValue="10:30:00"
             />
           </div>
 
@@ -127,6 +129,7 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
                 clearErrors?.(['timeEnd', 'range'])
               }}
               error={errors?.timeEnd}
+              defaultValue="10:30:00"
             />
           </div>
 

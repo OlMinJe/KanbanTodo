@@ -1,7 +1,7 @@
 // TODO: 기능 구현 시 정리 필요
 export type KanbanReadData = {
   title: string
-  status: 'todo' | 'hold' | 'complete'
+  status: 'todo' | 'doing' | 'done' | 'defer' | 'remove'
   priority: string
   singleDate?: string
   singleTime?: string
@@ -10,6 +10,22 @@ export type KanbanReadData = {
   rangedateEnd?: string
   rangetimeEnd?: string
   description?: string
+}
+
+// TODO 진행 중! 이 있었네..
+function labelOfStatus(s: 'todo' | 'doing' | 'done' | 'defer' | 'remove') {
+  switch (s) {
+    case 'todo':
+      return '할 일'
+    case 'doing':
+      return '진행 중'
+    case 'done':
+      return '완료'
+    case 'defer':
+      return '보류'
+    case 'remove':
+      return '삭제'
+  }
 }
 
 export default function TodoFormRead({ data }: { data: KanbanReadData }) {
@@ -72,16 +88,4 @@ function BadgeLike({ label, value }: { label: string; value: string }) {
       <span className="text-xs font-medium">{value}</span>
     </span>
   )
-}
-
-// TODO 진행 중! 이 있었네..
-function labelOfStatus(s: 'todo' | 'hold' | 'complete') {
-  switch (s) {
-    case 'todo':
-      return '할 일'
-    case 'hold':
-      return '보류'
-    case 'complete':
-      return '완료'
-  }
 }

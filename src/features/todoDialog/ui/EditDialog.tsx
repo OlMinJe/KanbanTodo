@@ -1,5 +1,5 @@
 import type { STATUS_TYPE, TODO, TODO_STATUS_META } from '@/entities/todo'
-import { DEFER, Delete, Doing, Done, MOODS, Todo } from '@/features/todoDialog'
+import { Defer, Delete, Doing, Done, MOODS, Todo } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { useMemo, useState } from 'react'
 
@@ -59,7 +59,7 @@ export default function EditDialog(
       )}
 
       {variant === 'defer' && (
-        <DEFER
+        <Defer
           reason={reason}
           setReason={setReason}
           error={tried && reasonInvalid ? '보류 사유를 입력해 주세요.' : undefined}

@@ -1,4 +1,4 @@
-// types
+// model
 export * from '@/features/dialog/model/types'
 
 // ui

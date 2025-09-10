@@ -11,7 +11,7 @@ export * from '@/features/todoDialog/model/useTodoFormStore'
 
 // ui
 export { default as DatePopover } from '@/features/todoDialog/ui/DatePopover'
-export { default as DEFER } from '@/features/todoDialog/ui/dialogContent/DEFER'
+export { default as Defer } from '@/features/todoDialog/ui/dialogContent/Defer'
 export { default as Delete } from '@/features/todoDialog/ui/dialogContent/Delete'
 export { default as Doing } from '@/features/todoDialog/ui/dialogContent/Doing'
 export { default as Done } from '@/features/todoDialog/ui/dialogContent/Done'

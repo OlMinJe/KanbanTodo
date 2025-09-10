@@ -1,7 +1,7 @@
 import { DatePopover } from '@/features/todoDialog'
 import { InputField } from '@/shared/ui/form'
 
-export default function Hold(props: {
+export default function Defer(props: {
   reason: string
   setReason: (v: string) => void
   error?: string

@@ -124,7 +124,6 @@ export function useTodoActions({ todo, onDone }: Params) {
 
   const confirmRemove = useCallback(async () => {
     if (!todo) return
-    // await apiRemoveTodo(todo.id)
     await apiUpdateTodo(todo.id, {
       status: 'remove',
       meta: { reason: '사용자가 삭제' },

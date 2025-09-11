@@ -1,3 +1,4 @@
+import { useTodoStore } from '@/entities/todo'
 import { Calendar as BaseCalendar } from '@/shared/ui/shadcn'
 import { DayButton } from '@/widgets/todoCalendar'
 import { useState, type ComponentProps } from 'react'
@@ -6,13 +7,17 @@ type CalendarProps = ComponentProps<typeof BaseCalendar>
 
 const Calendar = ({ className, ...props }: CalendarProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const setSelectedDate = useTodoStore((s) => s.setSelectedDate)
 
   return (
     <BaseCalendar
       {...props}
       mode="single"
       selected={date}
-      onSelect={setDate}
+      onSelect={(d) => {
+        setDate(d)
+        setSelectedDate(d)
+      }}
       className="mt-0 mb-5 mx-auto text-foreground"
       classNames={{
         caption_label:

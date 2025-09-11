@@ -115,7 +115,7 @@ export const hms8 = (s?: string) => ensureHMS(s).slice(0, 8)
 
 // Date | 'YYYY-MM-DD' → 'YYYY-MM-DD' (KST)
 export const asYMD = (d: string | Date): string => {
-  if (typeof d === 'string') return d
+  if (typeof d === 'string') return d.slice(0, 10)
   return d.toLocaleDateString('en-CA', { timeZone: KST_TZ })
 }
 

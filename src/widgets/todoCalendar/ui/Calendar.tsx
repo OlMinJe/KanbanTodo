@@ -15,6 +15,7 @@ const Calendar = ({ className, ...props }: CalendarProps) => {
       mode="single"
       selected={date}
       onSelect={(d) => {
+        if (!d) return
         setDate(d)
         setSelectedDate(d)
       }}

@@ -1,5 +1,4 @@
 export * from '@/shared/lib/date'
-export * from '@/shared/lib/ISO'
 export * from '@/shared/lib/routes'
 export * from '@/shared/lib/storage'
 export * from '@/shared/lib/utils'

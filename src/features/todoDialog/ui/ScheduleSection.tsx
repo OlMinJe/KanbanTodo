@@ -1,39 +1,26 @@
 import type { FORM_ERRORS, TODO } from '@/entities/todo'
-import { DatePopover, useTodoFormStore } from '@/features/todoDialog'
+import { DatePopover, useScheduleFields } from '@/features/todoDialog'
 import { InputField } from '@/shared/ui/form'
 import { Switch } from '@/shared/ui/shadcn'
-import { type ChangeEvent } from 'react'
 
-export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERRORS }) {
-  const { errors = {} } = props
-  const {
-    isRange,
-    dateSingle,
-    timeSingle,
-    dateStart,
-    timeStart,
-    dateEnd,
-    timeEnd,
-    setField,
-    clearErrors,
-  } = useTodoFormStore((s) => s)
+export default function ScheduleSection(props: {
+  todo: TODO
+  errors?: FORM_ERRORS
+  openedAt?: number
+}) {
+  const { errors = {}, openedAt } = props
+  const { state, display, handlers } = useScheduleFields({ openedAt })
 
   return (
     <fieldset className="mt-4 space-y-3">
       <legend className="sr-only">날짜/시간</legend>
 
       <div className="flex items-center gap-2">
-        <Switch
-          checked={!!isRange}
-          onCheckedChange={(b) => {
-            setField('isRange', b)
-            clearErrors?.(['date', 'time', 'dateStart', 'timeStart', 'dateEnd', 'timeEnd', 'range'])
-          }}
-        />
+        <Switch checked={!!state.isRange} onCheckedChange={handlers.onToggleRange} />
         <span className="text-sm">기간 선택(시작/종료)</span>
       </div>
 
-      {!isRange && (
+      {!state.isRange && (
         <div className="flex gap-4">
           <DatePopover
             id="single-date"
@@ -41,11 +28,8 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
             label="날짜"
             required
             containerClassName="flex flex-col gap-3"
-            value={dateSingle}
-            onValueChange={(d) => {
-              setField('dateSingle', d)
-              clearErrors?.(['date'])
-            }}
+            value={state.dateSingle}
+            onValueChange={(d) => handlers.onChangeSingleDate(d ?? new Date())}
             error={errors?.date}
           />
           <InputField
@@ -56,18 +40,14 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
             containerClassName="flex flex-col gap-3"
             type="time"
             step="1"
-            value={timeSingle}
-            onChange={(e: any) => {
-              setField('timeSingle', e.target.value)
-              clearErrors?.(['time'])
-            }}
+            value={display.timeSingle8}
+            onChange={handlers.onChangeSingleTime as any}
             error={errors?.time}
-            defaultValue="10:30:00"
           />
         </div>
       )}
 
-      {isRange && (
+      {state.isRange && (
         <>
           <div className="flex gap-4">
             <DatePopover
@@ -76,11 +56,8 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
               label="시작 날짜"
               required
               containerClassName="flex flex-col gap-3"
-              value={dateStart}
-              onValueChange={(d) => {
-                setField('dateStart', d)
-                clearErrors?.(['dateStart', 'range'])
-              }}
+              value={state.dateStart}
+              onValueChange={(d) => handlers.onChangeStartDate(d ?? new Date())}
               error={errors?.dateStart}
             />
             <InputField
@@ -91,13 +68,9 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
               containerClassName="flex flex-col gap-3"
               type="time"
               step="1"
-              value={timeStart}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setField('timeStart', e.target.value)
-                clearErrors?.(['timeStart', 'range'])
-              }}
+              value={display.timeStart8}
+              onChange={handlers.onChangeStartTime}
               error={errors?.timeStart}
-              defaultValue="10:30:00"
             />
           </div>
 
@@ -108,11 +81,8 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
               label="종료 날짜"
               required
               containerClassName="flex flex-col gap-3"
-              value={dateEnd}
-              onValueChange={(d) => {
-                setField('dateEnd', d)
-                clearErrors?.(['dateEnd', 'range'])
-              }}
+              value={state.dateEnd}
+              onValueChange={(d) => handlers.onChangeEndDate(d ?? new Date())}
               error={errors?.dateEnd}
             />
             <InputField
@@ -123,13 +93,9 @@ export default function ScheduleSection(props: { todo: TODO; errors?: FORM_ERROR
               containerClassName="flex flex-col gap-3"
               type="time"
               step="1"
-              value={timeEnd}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setField('timeEnd', e.target.value)
-                clearErrors?.(['timeEnd', 'range'])
-              }}
+              value={display.timeEnd8}
+              onChange={handlers.onChangeEndTime}
               error={errors?.timeEnd}
-              defaultValue="10:30:00"
             />
           </div>
 

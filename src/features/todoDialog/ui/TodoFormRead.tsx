@@ -1,10 +1,11 @@
 import { getTodo, removeTodo } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import { EditDialog, PROPS_INFO, STATUS_DIALOG_TEXT, TodoForm } from '@/features/todoDialog'
+import { fromISO } from '@/shared/lib'
 import { Button } from '@/shared/ui/shadcn'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-function labelOfStatus(s: 'todo' | 'doing' | 'done' | 'defer' | 'remove') {
+const labelOfStatus = (s: 'todo' | 'doing' | 'done' | 'defer' | 'remove') => {
   switch (s) {
     case 'todo':
       return '할 일'
@@ -19,6 +20,26 @@ function labelOfStatus(s: 'todo' | 'doing' | 'done' | 'defer' | 'remove') {
   }
 }
 
+function pickParts(
+  todo: any,
+  isoKey: string,
+  dateKey: string,
+  timeKey: string
+): { date?: string; time?: string } {
+  const iso = todo?.[isoKey] as string | undefined | null
+  if (iso) {
+    const parts = fromISO(iso)
+    return {
+      date: parts.date,
+      time: parts.time ? parts.time.slice(0, 5) : undefined,
+    }
+  }
+  return {
+    date: todo?.[dateKey],
+    time: (todo?.[timeKey] ?? '').slice(0, 5) || undefined,
+  }
+}
+
 export default function TodoFormRead({ todoId }: { todoId: string }) {
   const [todo, setTodo] = useState<any>(null)
 
@@ -29,7 +50,31 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
     })()
   }, [todoId])
 
-  if (!todo) return <div className="p-4">불러오는 중…</div>
+  const display = useMemo(() => {
+    if (!todo) return null
+
+    if (todo.isRange) {
+      const start = pickParts(todo, 'startsAt', 'dateStart', 'timeStart')
+      const end = pickParts(todo, 'endsAt', 'dateEnd', 'timeEnd')
+      return {
+        isRange: true,
+        startDate: start.date ?? '-',
+        startTime: start.time ?? '-',
+        endDate: end.date ?? '-',
+        endTime: end.time ?? '-',
+      }
+    } else {
+      const single = pickParts(todo, 'scheduledAt', 'dateSingle', 'timeSingle')
+      return {
+        isRange: false,
+        date: single.date ?? '-',
+        time: single.time ?? '-',
+      }
+    }
+  }, [todo])
+
+  if (!todo || !display) return <div className="p-4">불러오는 중…</div>
+
   return (
     <div className="flex flex-col gap-5">
       <section className="space-y-2">
@@ -39,27 +84,26 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
         </div>
       </section>
 
-      {/* 날짜/시간 */}
       <section className="space-y-3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">기간</span>
         </div>
 
-        {todo.isRange ? (
+        {display.isRange ? (
           <div className="flex gap-5">
             <div className="flex gap-4">
-              <ReadField label="시작 날짜" value={todo.dateStart ?? '-'} />
-              <ReadField label="시작 시간" value={todo.timeStart ?? '-'} />
+              <ReadField label="시작 날짜" value={display.startDate} />
+              <ReadField label="시작 시간" value={display.startTime} />
             </div>
             <div className="flex gap-4">
-              <ReadField label="종료 날짜" value={todo.dateEnd ?? '-'} />
-              <ReadField label="종료 시간" value={todo.timeEnd ?? '-'} />
+              <ReadField label="종료 날짜" value={display.endDate} />
+              <ReadField label="종료 시간" value={display.endTime} />
             </div>
           </div>
         ) : (
           <div className="flex gap-4">
-            <ReadField label="날짜" value={todo.dateSingle ?? '-'} />
-            <ReadField label="시간" value={todo.timeSingle ?? '-'} />
+            <ReadField label="날짜" value={display.date} />
+            <ReadField label="시간" value={display.time} />
           </div>
         )}
       </section>
@@ -106,11 +150,11 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
   )
 }
 
-function ReadField({ label, value }: { label: string; value: string }) {
+function ReadField({ label, value }: { label: string; value: string | undefined }) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="min-h-[36px] rounded-md border px-3 py-2 text-sm">{value}</span>
+      <span className="min-h-[36px] rounded-md border px-3 py-2 text-sm">{value ?? '-'}</span>
     </div>
   )
 }

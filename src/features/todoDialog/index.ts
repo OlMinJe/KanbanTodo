@@ -6,6 +6,7 @@ export * from '@/features/todoDialog/lib/nowHHmm'
 export * from '@/features/todoDialog/model/helpers'
 export * from '@/features/todoDialog/model/initial'
 export * from '@/features/todoDialog/model/store'
+export * from '@/features/todoDialog/model/useScheduleFields'
 export * from '@/features/todoDialog/model/useTodoActions'
 export * from '@/features/todoDialog/model/useTodoFormStore'
 

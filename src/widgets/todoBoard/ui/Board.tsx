@@ -1,12 +1,18 @@
 import type { STATUS_TYPE } from '@/entities/todo'
-import { type TODO, TODO_STATUS, useTodoStore } from '@/entities/todo'
+import { filterTodos, type TODO, TODO_STATUS, useTodoStore } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import { STATUS_LABELS, TodoFormRead } from '@/features/todoDialog'
 import { Card, Column, Menu } from '@/widgets/todoBoard'
 import { useMemo } from 'react'
 
 export default function Board() {
-  const todos = useTodoStore((s) => s.items)
+  const items = useTodoStore((s) => s.items)
+  const selectedDateYMD = useTodoStore((s) => s.selectedDateYMD)
+
+  const todos = useMemo(
+    () => filterTodos(items, { date: selectedDateYMD }),
+    [items, selectedDateYMD]
+  )
 
   const byStatus = useMemo(() => {
     const g: Record<STATUS_TYPE, TODO[]> = {

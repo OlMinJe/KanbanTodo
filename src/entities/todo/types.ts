@@ -74,3 +74,12 @@ export type FORM_ERRORS = Partial<
 export type SCHEDULE_PAYLOAD =
   | { type: 'single'; at: string | null }
   | { type: 'range'; start: string | null; end: string | null }
+
+export type TODO_FILTER = {
+  date?: Date | string
+  status?: STATUS_TYPE | STATUS_TYPE[]
+  priorities?: PRIORITY_TYPE[]
+  q?: string
+  tagsAny?: string[]
+  tagsAll?: string[]
+}

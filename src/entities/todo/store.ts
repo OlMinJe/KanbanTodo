@@ -1,10 +1,22 @@
-import type { SUBMIT_PAYLOAD, TODO, TODO_HISTORY } from '@/entities/todo'
-import { normalizeUpdateFromPayload, TODO_KEY, todoCreateDTO } from '@/entities/todo'
+import type { SUBMIT_PAYLOAD, TODO, TODO_FILTER, TODO_HISTORY } from '@/entities/todo'
+import {
+  filterTodos,
+  includesYMD,
+  matchPriority,
+  matchQuery,
+  matchStatus,
+  matchTags,
+  normalizeUpdateFromPayload,
+  TODO_KEY,
+  todoCreateDTO,
+} from '@/entities/todo'
+import { asYMD } from '@/shared/lib'
 import { create } from 'zustand'
 import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware'
 
 type TodoState = {
   items: TODO[]
+  selectedDateYMD?: string
 }
 
 type TodoActions = {
@@ -17,10 +29,12 @@ type TodoActions = {
   removeTodo: (id: string) => boolean
   getTodo: (id: string) => TODO | undefined
   listTodos: () => TODO[]
+  filterTodos: (items: TODO[], filter: TODO_FILTER) => TODO[]
   clearAll: () => void
+  setSelectedDate: (d?: Date | string) => void
 }
 
-const initialState: TodoState = { items: [] }
+const initialState: TodoState = { items: [], selectedDateYMD: asYMD(new Date()) }
 
 export const useTodoStore = create<TodoState & TodoActions>()(
   persist(
@@ -80,7 +94,19 @@ export const useTodoStore = create<TodoState & TodoActions>()(
 
       getTodo: (id) => get().items.find((t) => t.id === id),
       listTodos: () => get().items.slice(),
+      filterTodos: (items: TODO[], filter: TODO_FILTER = {}) => {
+        const ymd = filter.date ? asYMD(filter.date) : undefined
+        return (items ?? []).filter(
+          (t) =>
+            (!ymd || includesYMD(t, ymd)) &&
+            matchStatus(t, filter.status) &&
+            matchPriority(t, filter.priorities) &&
+            matchTags(t, filter.tagsAny, filter.tagsAll) &&
+            matchQuery(t, filter.q)
+        )
+      },
       clearAll: () => set(() => ({ items: [] })),
+      setSelectedDate: (d) => set({ selectedDateYMD: d ? asYMD(d) : undefined }),
     })),
     {
       name: TODO_KEY,
@@ -93,3 +119,22 @@ export const useTodoStore = create<TodoState & TodoActions>()(
     }
   )
 )
+
+export const selectTodosFiltered =
+  (filter: TODO_FILTER = {}) =>
+  (s: TodoState): TODO[] =>
+    filterTodos(s.items, filter)
+
+export const selectTodosByDate =
+  (date: Date | string) =>
+  (s: TodoState): TODO[] =>
+    filterTodos(s.items, { date })
+
+export const selectSelectedDateYMD = (s: TodoState) => s.selectedDateYMD
+export const selectTodosBySelectedDate = (s: TodoState): TODO[] =>
+  filterTodos(s.items, { date: s.selectedDateYMD })
+export const selectTodoById =
+  (id: string) =>
+  (s: TodoState): TODO | undefined =>
+    s.items.find((t) => t.id === id)
+export const selectTodoCount = (s: TodoState): number => s.items.length

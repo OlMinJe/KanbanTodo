@@ -1,24 +1,9 @@
-import { getTodo, removeTodo } from '@/entities/todo'
+import { getTodo, removeTodo, type STATUS_TYPE } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import { EditDialog, PROPS_INFO, STATUS_DIALOG_TEXT, TodoForm } from '@/features/todoDialog'
-import { fromISO } from '@/shared/lib'
+import { fromISO, getStatusLabel } from '@/shared/lib'
 import { Button } from '@/shared/ui/shadcn'
 import { useEffect, useMemo, useState } from 'react'
-
-const labelOfStatus = (s: 'todo' | 'doing' | 'done' | 'defer' | 'remove') => {
-  switch (s) {
-    case 'todo':
-      return '할 일'
-    case 'doing':
-      return '진행 중'
-    case 'done':
-      return '완료'
-    case 'defer':
-      return '보류'
-    case 'remove':
-      return '삭제'
-  }
-}
 
 function pickParts(
   todo: any,
@@ -79,7 +64,7 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
     <div className="flex flex-col gap-5">
       <section className="space-y-2">
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <BadgeLike label="상태" value={labelOfStatus(todo.status)} />
+          <BadgeLike label="상태" value={getStatusLabel(todo.status as STATUS_TYPE)} />
           <BadgeLike label="우선순위" value={todo.priority} />
         </div>
       </section>

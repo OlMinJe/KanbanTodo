@@ -1,7 +1,9 @@
-import { getTodo } from '@/entities/todo'
+import { getTodo, removeTodo } from '@/entities/todo'
+import { BaseDialog } from '@/features/dialog'
+import { EditDialog, PROPS_INFO, STATUS_DIALOG_TEXT, TodoForm } from '@/features/todoDialog'
+import { Button } from '@/shared/ui/shadcn'
 import { useEffect, useState } from 'react'
 
-// TODO 진행 중! 이 있었네..
 function labelOfStatus(s: 'todo' | 'doing' | 'done' | 'defer' | 'remove') {
   switch (s) {
     case 'todo':
@@ -26,8 +28,6 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
       setTodo(t ?? null)
     })()
   }, [todoId])
-
-  console.log(todo)
 
   if (!todo) return <div className="p-4">불러오는 중…</div>
   return (
@@ -70,6 +70,38 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
           <p className="rounded-md border p-3 text-sm leading-6">{todo.description}</p>
         </section>
       )}
+
+      <div className="flex justify-end gap-2">
+        <BaseDialog
+          title={PROPS_INFO.update.title}
+          des={PROPS_INFO.update.description}
+          trigger={<Button type="button">수정하기</Button>}
+        >
+          {({ close }) => <TodoForm type="update" todoId={todo.id} onCancel={close} />}
+        </BaseDialog>
+
+        <BaseDialog
+          title={STATUS_DIALOG_TEXT.remove.title}
+          des={STATUS_DIALOG_TEXT.remove.description}
+          trigger={
+            <Button type="button" className="text-red-500">
+              삭제하기
+            </Button>
+          }
+        >
+          {({ close }) => (
+            <EditDialog
+              variant="remove"
+              todo={todo}
+              onCancel={close}
+              onSuccess={async () => {
+                await removeTodo(todo.id)
+                close()
+              }}
+            />
+          )}
+        </BaseDialog>
+      </div>
     </div>
   )
 }

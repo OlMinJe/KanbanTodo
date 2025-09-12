@@ -87,9 +87,15 @@ export const useTodoStore = create<TodoState & TodoActions>()(
       },
 
       removeTodo: (id) => {
-        const before = get().items.length
-        set((s) => ({ items: s.items.filter((t) => t.id !== id) }))
-        return get().items.length !== before
+        // const before = get().items.length
+        // set((s) => ({ items: s.items.filter((t) => t.id !== id) }))
+        // return get().items.length !== before
+        const prev = get().items.find((t) => t.id === id)
+        if (!prev) return false
+        if (prev.status === 'remove') return false
+
+        const updated = get().updateTodo(id, { status: 'remove' })
+        return !!updated
       },
 
       getTodo: (id) => get().items.find((t) => t.id === id),

@@ -1,3 +1,9 @@
+import { ActivityTimeline } from '@/widgets/timeline'
+
 export default function Timeline() {
-  return <h1>Timeline</h1>
+  return (
+    <div>
+      <ActivityTimeline />
+    </div>
+  )
 }

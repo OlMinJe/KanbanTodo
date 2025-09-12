@@ -24,6 +24,24 @@ export type SUBMIT_PAYLOAD = {
   schedule: SCHEDULE
 }
 
+export type LIST_PAYLOAD = {
+  page?: number
+  pageSize?: number
+  sortBy?: 'updatedAt' | 'createdAt' | 'title'
+  order?: 'asc' | 'desc'
+  filter?: TODO_FILTER
+}
+
+export type LIST_RESULT = {
+  items: { todo: TODO; history: NonNullable<TODO['history']>[number]; key: string; at: string }[]
+  page: number
+  pageSize: number
+  total: number
+  pages: number
+  hasPrev: boolean
+  hasNext: boolean
+}
+
 export type TODO_STATUS_META = {
   reason?: string // 삭제/보류/되돌리기 사유 등
   mood?: string // 완료 시 선택한 이모지

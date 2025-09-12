@@ -1,4 +1,11 @@
-import type { SUBMIT_PAYLOAD, TODO, TODO_FILTER, TODO_HISTORY } from '@/entities/todo'
+import type {
+  LIST_PAYLOAD,
+  LIST_RESULT,
+  SUBMIT_PAYLOAD,
+  TODO,
+  TODO_FILTER,
+  TODO_HISTORY,
+} from '@/entities/todo'
 import {
   filterTodos,
   includesYMD,
@@ -28,7 +35,7 @@ type TodoActions = {
   ) => TODO | undefined
   removeTodo: (id: string) => boolean
   getTodo: (id: string) => TODO | undefined
-  listTodos: () => TODO[]
+  listTodos: (opts?: LIST_PAYLOAD) => LIST_RESULT
   filterTodos: (items: TODO[], filter: TODO_FILTER) => TODO[]
   clearAll: () => void
   setSelectedDate: (d?: Date | string) => void
@@ -99,7 +106,58 @@ export const useTodoStore = create<TodoState & TodoActions>()(
       },
 
       getTodo: (id) => get().items.find((t) => t.id === id),
-      listTodos: () => get().items.slice(),
+      listTodos: (opts?: LIST_PAYLOAD) => {
+        const { page = 1, pageSize = 20, sortBy = 'at', order = 'desc', filter } = opts ?? {}
+
+        const base = get().items
+        const filtered = filter ? filterTodos(base, filter) : base
+
+        const rows: LIST_RESULT['items'] = []
+        for (const t of filtered) {
+          const hs = t.history ?? []
+          for (const h of hs) {
+            const at = h.at ?? t.updatedAt ?? t.createdAt ?? ''
+            const key = `${t.id}|${h.at ?? ''}|${h.from ?? ''}|${h.to ?? ''}`
+            rows.push({ key, todo: t, history: h, at })
+          }
+        }
+
+        const itemList: typeof rows = []
+        const seen = new Set<string>()
+        for (const r of rows) {
+          if (seen.has(r.key)) continue
+          seen.add(r.key)
+          itemList.push(r)
+        }
+
+        const sorted = itemList.sort((a, b) => {
+          let ax: number | string = a[sortBy as keyof typeof a] as any
+          let bx: number | string = b[sortBy as keyof typeof b] as any
+          ax = typeof ax === 'string' ? Date.parse(ax) || 0 : (ax as any)
+          bx = typeof bx === 'string' ? Date.parse(bx) || 0 : (bx as any)
+          const cmp = ax < bx ? -1 : ax > bx ? 1 : 0
+          return order === 'asc' ? cmp : -cmp
+        })
+
+        const size = Math.max(1, pageSize)
+        const cur = Math.max(1, page)
+        const start = (cur - 1) * size
+        const end = start + size
+
+        const total = sorted.length
+        const pages = Math.max(1, Math.ceil(total / size))
+        const items = sorted.slice(start, end)
+
+        return {
+          items,
+          page: cur,
+          pageSize: size,
+          total,
+          pages,
+          hasPrev: cur > 1,
+          hasNext: end < total,
+        }
+      },
       filterTodos: (items: TODO[], filter: TODO_FILTER = {}) => {
         const ymd = filter.date ? asYMD(filter.date) : undefined
         return (items ?? []).filter(

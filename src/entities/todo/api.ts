@@ -1,12 +1,19 @@
-import type { SUBMIT_PAYLOAD, TODO, TODO_FILTER, TODO_HISTORY } from '@/entities/todo'
+import type {
+  LIST_PAYLOAD,
+  LIST_RESULT,
+  SUBMIT_PAYLOAD,
+  TODO,
+  TODO_FILTER,
+  TODO_HISTORY,
+} from '@/entities/todo'
 import { useTodoStore } from '@/entities/todo'
 
 export async function createTodo(payload: SUBMIT_PAYLOAD): Promise<TODO> {
   return useTodoStore.getState().createFromPayload(payload)
 }
 
-export async function listTodos(): Promise<TODO[]> {
-  return useTodoStore.getState().listTodos()
+export async function listTodos(opts?: LIST_PAYLOAD): Promise<LIST_RESULT> {
+  return useTodoStore.getState().listTodos(opts)
 }
 
 export function filterTodos(items: TODO[], filter: TODO_FILTER = {}): TODO[] {

@@ -27,7 +27,7 @@ const pad2 = (n: number) => String(n).padStart(2, '0')
 // 공통 포맷 헬퍼: 주어진 Date를 지정 TZ 기준으로 {date, time} 문자열로 변환
 //  - date: 'YYYY-MM-DD' (en-CA)
 //  - time: 'HH:mm:ss'   (en-GB, 24h, zero-pad)
-const partsInTZ = (date: Date, tz: string) => {
+export const partsInTZ = (date: Date, tz?: string) => {
   const dateStr = date.toLocaleDateString('en-CA', { timeZone: tz }) // YYYY-MM-DD
   const timeStr = date.toLocaleTimeString('en-GB', {
     timeZone: tz,

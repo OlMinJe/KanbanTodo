@@ -18,14 +18,9 @@ export default function ActivityTimeline() {
     if (loadedPagesRef.current.has(page)) return
     loadedPagesRef.current.add(page)
 
-    const { items, hasNext: next } = listTodos({ page, pageSize: PAGE_SIZE })
-    setHasNext(Boolean(next))
-
-    setActivities((prev) => {
-      const next = new Map(prev.map((x) => [x.key, x]))
-      for (const x of items) if (!next.has(x.key)) next.set(x.key, x)
-      return Array.from(next.values())
-    })
+    const { items, hasNext: hasNextPage } = listTodos({ page, pageSize: PAGE_SIZE })
+    setHasNext(Boolean(hasNextPage))
+    setActivities((prev) => [...prev, ...items])
   }, [page, listTodos])
 
   const onLoadMore = () => {
@@ -35,7 +30,7 @@ export default function ActivityTimeline() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 sm:px-5 py-3">
+      <div className="flex items-center justify-between px-0 sm:px-5 py-3">
         <div className="flex items-center gap-2">
           <h2 className="text-base font-semibold">타임라인</h2>
           <Separator orientation="vertical" className="mx-1 h-4" />
@@ -45,7 +40,7 @@ export default function ActivityTimeline() {
       </div>
 
       {/* List */}
-      <div className="relative px-4 sm:px-5 py-4">
+      <div className="relative px-0 sm:px-5 py-4">
         <div className="space-y-6">
           {activities.map(({ key, todo, history }) => (
             <TimelineItem

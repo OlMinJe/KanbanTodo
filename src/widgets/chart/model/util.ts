@@ -56,3 +56,29 @@ export function filterThisWeekKST(items: TODO[], ref: Date = new Date()) {
     return eMs >= startMs && sMs <= endMs
   })
 }
+
+export function doneThisWeekByWeekday(items: TODO[]) {
+  const week = filterThisWeekKST(items)
+  const counts = [0, 0, 0, 0, 0, 0, 0]
+
+  for (const t of week) {
+    if (t.status !== TODO_STATUS.DONE) continue
+
+    const ymd = t.isRange ? (t.dateStart ?? t.dateEnd) : t.dateSingle
+    const hms = t.isRange ? (t.timeStart ?? '00:00:00') : (t.timeSingle ?? '00:00:00')
+    const ms = msFromKST(ymd ?? undefined, ensureHMS(hms))
+    if (Number.isNaN(ms)) continue
+
+    const wd = new Intl.DateTimeFormat('en-US', {
+      timeZone: KST_TZ,
+      weekday: 'short',
+    }).format(new Date(ms)) as 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+
+    // 월(0)~일(6) 인덱스
+    const idx = ({ Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 } as const)[wd]
+    counts[idx]++
+  }
+
+  const labels = ['월', '화', '수', '목', '금', '토', '일'] as const
+  return labels.map((label, i) => ({ label, count: counts[i] }))
+}

@@ -82,3 +82,20 @@ export function doneThisWeekByWeekday(items: TODO[]) {
   const labels = ['월', '화', '수', '목', '금', '토', '일'] as const
   return labels.map((label, i) => ({ label, count: counts[i] }))
 }
+
+export function weekLabelKST(ref: Date = new Date()) {
+  const { date } = partsInTZ(ref, KST_TZ) // 'YYYY-MM-DD'
+  const [yy, mm, dd] = date.split('-').map(Number)
+
+  const firstIso = toISO(`${yy}-${String(mm).padStart(2, '0')}-01`, '00:00:00', KST_TZ)!
+  const firstDay = new Date(firstIso)
+  const wd = new Intl.DateTimeFormat('en-US', { timeZone: KST_TZ, weekday: 'short' }).format(
+    firstDay
+  ) as 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+
+  const sun0 = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[wd]
+  const firstMonShift = (sun0 + 6) % 7
+  const weekIndex = Math.floor((firstMonShift + (dd - 1)) / 7) + 1
+
+  return `${yy}년도 ${mm}월 ${weekIndex}주차`
+}

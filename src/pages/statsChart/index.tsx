@@ -2,12 +2,16 @@ import { AreaChart, BarCharHorizontal, BarChart, PieChartCountText } from '@/wid
 
 export default function StatsChart() {
   return (
-    <div className="min-w-[320px] max-w-3xl mx-auto my-0">
-      <div className="mb-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <div className="container mx-auto max-w-5xl px-4">
+      <div className="mb-4 grid gap-4 md:grid-cols-3">
+        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <PieChartCountText />
+          <BarCharHorizontal />
+        </div>
+
         <BarChart />
-        <BarCharHorizontal />
-        <PieChartCountText />
       </div>
+
       <AreaChart />
     </div>
   )

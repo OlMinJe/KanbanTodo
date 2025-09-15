@@ -2,14 +2,14 @@
 export const ROUTES = {
   HOME: { to: '/', label: 'To-Do' },
   TIMELINE: { to: '/timeline', label: '타임라인' },
-  STATS: { to: '/stats', label: '통계' },
+  STATS_CHART: { to: '/statschart', label: '통계' },
   NOT_FOUND: { to: '*', label: 'NOT_FOUND' },
 }
 
 export type RouteKey = keyof typeof ROUTES
 export type RouteInfo = (typeof ROUTES)[RouteKey]
 
-export const NAV_ORDER = ['HOME', 'TIMELINE', 'STATS'] as const
+export const NAV_ORDER = ['HOME', 'TIMELINE', 'STATS_CHART'] as const
 
 export const NAV_ITEMS: Readonly<RouteInfo[]> = NAV_ORDER.map((k) => ROUTES[k])
 

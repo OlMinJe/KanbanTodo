@@ -4,7 +4,7 @@ import { lazy } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 
 const Home = lazy(() => import('@/pages/home'))
-const Stats = lazy(() => import('@/pages/stats'))
+const StatsChart = lazy(() => import('@/pages/statsChart'))
 const Timeline = lazy(() => import('@/pages/timeline'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     children: [
       { path: ROUTES.HOME.to, element: <Home /> },
       { path: ROUTES.TIMELINE.to, element: <Timeline /> },
-      { path: ROUTES.STATS.to, element: <Stats /> },
+      { path: ROUTES.STATS_CHART.to, element: <StatsChart /> },
     ],
   },
 ])

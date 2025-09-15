@@ -23,7 +23,7 @@ export function makeStatusChartData(items: TODO[]) {
   }))
 }
 
-export function filterThisWeekKST(items: TODO[], ref: Date = new Date()) {
+export function filterWeekKST(items: TODO[], ref: Date = new Date()) {
   const { date: todayYMD } = partsInTZ(ref, KST_TZ)
 
   const weekdayShort = new Intl.DateTimeFormat('en-US', {
@@ -57,8 +57,8 @@ export function filterThisWeekKST(items: TODO[], ref: Date = new Date()) {
   })
 }
 
-export function doneThisWeekByWeekday(items: TODO[]) {
-  const week = filterThisWeekKST(items)
+export function doneWeekday(items: TODO[]) {
+  const week = filterWeekKST(items)
   const counts = [0, 0, 0, 0, 0, 0, 0]
 
   for (const t of week) {

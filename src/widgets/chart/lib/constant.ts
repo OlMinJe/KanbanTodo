@@ -16,82 +16,41 @@ export const barChartConfig = {
   },
 } satisfies ChartConfig
 
-export const barCharHorizontalConfig = {
+const commonChartConfig = {
+  todo: {
+    label: 'todo',
+    color: 'var(--chart-1)',
+  },
+  doing: {
+    label: 'doing',
+    color: 'var(--chart-2)',
+  },
+  defer: {
+    label: 'defer',
+    color: 'var(--chart-3)',
+  },
+  done: {
+    label: 'done',
+    color: 'var(--chart-4)',
+  },
+  remove: {
+    label: 'remove',
+    color: 'var(--chart-5)',
+  },
+}
+
+export const horizontalConfig = {
   status: {
     label: '작업 상태',
   },
-  todo: {
-    label: 'todo',
-    color: 'var(--chart-1)',
-  },
-  doing: {
-    label: 'doing',
-    color: 'var(--chart-2)',
-  },
-  defer: {
-    label: 'defer',
-    color: 'var(--chart-3)',
-  },
-  done: {
-    label: 'done',
-    color: 'var(--chart-4)',
-  },
-  remove: {
-    label: 'remove',
-    color: 'var(--chart-5)',
-  },
-} satisfies ChartConfig
-
-export const pieChartConfig = {
-  count: {
-    label: '작업 갯수',
-  },
-  todo: {
-    label: 'todo',
-    color: 'var(--chart-1)',
-  },
-  doing: {
-    label: 'doing',
-    color: 'var(--chart-2)',
-  },
-  defer: {
-    label: 'defer',
-    color: 'var(--chart-3)',
-  },
-  done: {
-    label: 'done',
-    color: 'var(--chart-4)',
-  },
-  remove: {
-    label: 'remove',
-    color: 'var(--chart-5)',
-  },
+  ...commonChartConfig,
 } satisfies ChartConfig
 
 export const chartConfig = {
   count: {
-    label: '작업 상태',
+    label: '작업 갯수',
   },
-  todo: {
-    label: 'todo',
-    color: 'var(--chart-1)',
-  },
-  doing: {
-    label: 'doing',
-    color: 'var(--chart-2)',
-  },
-  defer: {
-    label: 'defer',
-    color: 'var(--chart-3)',
-  },
-  done: {
-    label: 'done',
-    color: 'var(--chart-4)',
-  },
-  remove: {
-    label: 'remove',
-    color: 'var(--chart-5)',
-  },
+  ...commonChartConfig,
 } satisfies ChartConfig
 
 export const DAY_MS = 86_400_000

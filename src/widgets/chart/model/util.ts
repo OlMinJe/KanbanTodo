@@ -1,0 +1,58 @@
+import type { STATUS_TYPE, TODO } from '@/entities/todo'
+import { TODO_STATUS } from '@/entities/todo'
+import { ensureHMS, KST_TZ, msFromKST, partsInTZ, toISO } from '@/shared/lib'
+import { STATUS_ORDER } from '@/widgets/chart'
+
+export function groupByStatus(items: TODO[]) {
+  const g: Record<STATUS_TYPE, TODO[]> = {
+    [TODO_STATUS.TODO]: [],
+    [TODO_STATUS.DOING]: [],
+    [TODO_STATUS.DEFER]: [],
+    [TODO_STATUS.DONE]: [],
+    [TODO_STATUS.REMOVE]: [],
+  }
+  for (const t of items) g[t.status].push(t)
+  return g
+}
+
+export function makeStatusChartData(items: TODO[]) {
+  const g = groupByStatus(items)
+  return STATUS_ORDER.map((s) => ({
+    status: s,
+    count: g[s]?.length ?? 0,
+  }))
+}
+
+export function filterThisWeekKST(items: TODO[], ref: Date = new Date()) {
+  const { date: todayYMD } = partsInTZ(ref, KST_TZ)
+
+  const weekdayShort = new Intl.DateTimeFormat('en-US', {
+    timeZone: KST_TZ,
+    weekday: 'short',
+  }).format(ref) as 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+  const sun0 = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[weekdayShort]
+  const daysFromMonday = (sun0 + 6) % 7
+
+  const shiftYMD = (ymd: string, days: number) => {
+    const base = Date.parse(toISO(ymd, '00:00:00', KST_TZ)!)
+    return partsInTZ(new Date(base + days * 86_400_000), KST_TZ).date
+  }
+
+  const startYMD = shiftYMD(todayYMD, -daysFromMonday) // 이번주 월
+  const endYMD = shiftYMD(startYMD, 6) // 이번주 일
+  const startMs = Date.parse(toISO(startYMD, '00:00:00', KST_TZ)!)
+  const endMs = Date.parse(toISO(endYMD, '23:59:59', KST_TZ)!)
+
+  return items.filter((t) => {
+    let sMs: number, eMs: number
+    if (t.isRange) {
+      sMs = msFromKST(t.dateStart ?? undefined, ensureHMS(t.timeStart ?? '00:00:00'))
+      eMs = msFromKST(t.dateEnd ?? undefined, ensureHMS(t.timeEnd ?? '23:59:59'))
+    } else {
+      sMs = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
+      eMs = sMs
+    }
+    if (Number.isNaN(sMs) || Number.isNaN(eMs)) return false
+    return eMs >= startMs && sMs <= endMs
+  })
+}

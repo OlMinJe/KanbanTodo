@@ -75,7 +75,7 @@ export default function Board() {
                       <Card todo={t} renderMenu={<Menu todo={t} />} />
                     </div>
                   }
-                  render={() => <TodoFormRead todoId={t.id} />}
+                  render={({ close }) => <TodoFormRead todoId={t.id} onCancel={close} />}
                 />
               ))
             ) : (

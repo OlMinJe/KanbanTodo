@@ -1,6 +1,12 @@
-import { getTodo, removeTodo, type STATUS_TYPE } from '@/entities/todo'
+import { getTodo, TODO_STATUS, type STATUS_TYPE, type TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
-import { EditDialog, PROPS_INFO, STATUS_DIALOG_TEXT, TodoForm } from '@/features/todoDialog'
+import {
+  EditDialog,
+  PROPS_INFO,
+  STATUS_DIALOG_TEXT,
+  TodoForm,
+  useTodoActions,
+} from '@/features/todoDialog'
 import { fromISO, getStatusLabel } from '@/shared/lib'
 import { Button } from '@/shared/ui/shadcn'
 import { useEffect, useMemo, useState } from 'react'
@@ -25,13 +31,24 @@ function pickParts(
   }
 }
 
-export default function TodoFormRead({ todoId }: { todoId: string }) {
-  const [todo, setTodo] = useState<any>(null)
+export default function TodoFormRead({
+  todoId,
+  onCancel,
+}: {
+  todoId: string
+  onCancel: () => void
+}) {
+  const [todo, setTodo] = useState<TODO | undefined>(undefined)
+
+  const { confirmRemove } = useTodoActions({
+    todo: todo ?? undefined,
+    onDone: onCancel,
+  })
 
   useEffect(() => {
     ;(async () => {
       const t = await getTodo(todoId)
-      setTodo(t ?? null)
+      setTodo(t ?? undefined)
     })()
   }, [todoId])
 
@@ -117,19 +134,17 @@ export default function TodoFormRead({ todoId }: { todoId: string }) {
               삭제하기
             </Button>
           }
-        >
-          {({ close }) => (
+          render={({ close }) => (
             <EditDialog
-              variant="remove"
-              todo={todo}
+              variant={TODO_STATUS.REMOVE}
               onCancel={close}
-              onSuccess={async () => {
-                await removeTodo(todo.id)
+              onSuccess={async (extra) => {
+                await confirmRemove(extra)
                 close()
               }}
             />
           )}
-        </BaseDialog>
+        ></BaseDialog>
       </div>
     </div>
   )

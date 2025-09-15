@@ -153,8 +153,8 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
               <EditDialog
                 variant={TODO_STATUS.REMOVE}
                 onCancel={close}
-                onSuccess={async () => {
-                  await confirmRemove()
+                onSuccess={async (extra) => {
+                  await confirmRemove(extra)
                   close()
                 }}
               />

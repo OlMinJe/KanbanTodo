@@ -1,11 +1,24 @@
-import { removeTodo, type TODO } from '@/entities/todo'
+import { type TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
-import { EditDialog, PROPS_INFO, STATUS_DIALOG_TEXT, TodoForm } from '@/features/todoDialog'
+import {
+  EditDialog,
+  PROPS_INFO,
+  STATUS_DIALOG_TEXT,
+  TodoForm,
+  useTodoActions,
+} from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { Ellipsis, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
 export default function Menu({ todo }: { todo: TODO }) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation()
+  const [close, setClose] = useState<() => void>(() => {})
+
+  const { confirmRemove } = useTodoActions({
+    todo: todo ?? undefined,
+    onDone: close,
+  })
 
   return (
     <Shadcn.DropdownMenu>
@@ -48,8 +61,9 @@ export default function Menu({ todo }: { todo: TODO }) {
               variant="remove"
               onCancel={close}
               todo={todo}
-              onSuccess={async () => {
-                await removeTodo(todo.id)
+              onSuccess={async (extra) => {
+                setClose(close)
+                await confirmRemove(extra)
                 close()
               }}
             />

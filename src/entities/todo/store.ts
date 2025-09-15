@@ -13,7 +13,6 @@ import {
   matchQuery,
   matchStatus,
   matchTags,
-  normalizeUpdateFromPayload,
   TODO_KEY,
   todoCreateDTO,
 } from '@/entities/todo'
@@ -27,8 +26,7 @@ type TodoState = {
 }
 
 type TodoActions = {
-  createFromPayload: (payload: SUBMIT_PAYLOAD) => TODO
-  updateFromPayload: (id: string, payload: SUBMIT_PAYLOAD) => TODO | undefined
+  createTodo: (payload: SUBMIT_PAYLOAD) => TODO
   updateTodo: (
     id: string,
     patch: Partial<TODO> & { meta?: TODO_HISTORY['meta'] }
@@ -48,19 +46,24 @@ export const useTodoStore = create<TodoState & TodoActions>()(
     subscribeWithSelector((set, get) => ({
       ...initialState,
 
-      createFromPayload: (payload) => {
+      createTodo: (payload) => {
         const record = todoCreateDTO(payload)
-        set((s) => ({ items: [...s.items, record] }))
-        return record
-      },
+        const now = record.createdAt ?? new Date().toISOString()
 
-      updateFromPayload: (id, payload) => {
-        const idx = get().items.findIndex((t) => t.id === id)
-        if (idx < 0) return
-        set((s) => ({
-          items: s.items.map((t, i) => (i === idx ? normalizeUpdateFromPayload(t, payload) : t)),
-        }))
-        return get().items[idx]
+        const entry: TODO_HISTORY = {
+          at: now,
+          from: record.status,
+          to: record.status,
+        }
+
+        const withHistory: TODO = {
+          ...record,
+          updatedAt: now,
+          history: [...(record.history ?? []), entry],
+        }
+
+        set((s) => ({ items: [...s.items, withHistory] }))
+        return withHistory
       },
 
       updateTodo: (id, patch) => {
@@ -94,15 +97,9 @@ export const useTodoStore = create<TodoState & TodoActions>()(
       },
 
       removeTodo: (id) => {
-        // const before = get().items.length
-        // set((s) => ({ items: s.items.filter((t) => t.id !== id) }))
-        // return get().items.length !== before
-        const prev = get().items.find((t) => t.id === id)
-        if (!prev) return false
-        if (prev.status === 'remove') return false
-
-        const updated = get().updateTodo(id, { status: 'remove' })
-        return !!updated
+        const before = get().items.length
+        set((s) => ({ items: s.items.filter((t) => t.id !== id) }))
+        return get().items.length !== before
       },
 
       getTodo: (id) => get().items.find((t) => t.id === id),

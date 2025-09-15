@@ -117,22 +117,25 @@ export function useTodoActions({ todo, onDone }: Params) {
 
       closeEdit()
       resetErrors()
+      resetToInitial()
       onDone()
     },
     [todo, validateCore, validateSchedule, toUpdatedTodo, closeEdit, resetErrors, onDone]
   )
 
-  const confirmRemove = useCallback(async () => {
-    if (!todo) return
-    await apiUpdateTodo(todo.id, {
-      status: 'remove',
-      meta: { reason: '사용자가 삭제' },
-    })
-    closeEdit()
-    resetErrors()
-    resetToInitial()
-    onDone()
-  }, [todo, closeEdit, resetErrors, resetToInitial, onDone])
+  const confirmRemove = useCallback(
+    async (extra?: TODO_STATUS_META) => {
+      if (!todo) return
+
+      await apiUpdateTodo(todo.id, { ...todo, status: 'remove', meta: extra })
+
+      closeEdit()
+      resetErrors()
+      resetToInitial()
+      onDone()
+    },
+    [todo, closeEdit, resetErrors, resetToInitial, onDone]
+  )
 
   const handleCancel = useCallback(() => {
     resetErrors()

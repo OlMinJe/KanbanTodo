@@ -5,13 +5,15 @@ import * as Shadcn from '@/shared/ui/shadcn'
 import { useMemo } from 'react'
 import { Cell, Label, Pie, PieChart } from 'recharts'
 import { pieChartConfig, STATUS_ORDER } from '../lib/constant'
-import { filterThisWeekKST, groupByStatus, makeStatusChartData } from '../model/util'
+import { filterThisWeekKST, groupByStatus, makeStatusChartData, weekLabelKST } from '../model/util'
 
 export default function PieChartCountText() {
   const items = useTodoStore((s) => s.items)
   const weekItems = useMemo(() => filterThisWeekKST(items), [items])
   const chartData = useMemo(() => makeStatusChartData(weekItems), [weekItems])
   const groupedThisWeek = useMemo(() => groupByStatus(weekItems), [weekItems])
+
+  const desc = useMemo(() => weekLabelKST(new Date()), [])
 
   const { topStatuses, topCount, total } = useMemo(() => {
     let max = 0
@@ -28,7 +30,7 @@ export default function PieChartCountText() {
     <Shadcn.Card className="flex flex-col">
       <Shadcn.CardHeader className="items-center pb-0">
         <Shadcn.CardTitle>작업 상태(주간)</Shadcn.CardTitle>
-        <Shadcn.CardDescription>2024년도 9월 n주차</Shadcn.CardDescription>
+        <Shadcn.CardDescription>{desc}</Shadcn.CardDescription>
       </Shadcn.CardHeader>
 
       <Shadcn.CardContent className="flex-1 pb-0">
@@ -42,7 +44,6 @@ export default function PieChartCountText() {
               content={<Shadcn.ChartTooltipContent hideLabel />}
             />
             <Pie data={chartData} dataKey="count" nameKey="status" innerRadius={60} strokeWidth={5}>
-              {/* ✅ 각 조각 색 지정 */}
               {chartData.map((d) => (
                 <Cell key={d.status} fill={`var(--color-${d.status})`} />
               ))}

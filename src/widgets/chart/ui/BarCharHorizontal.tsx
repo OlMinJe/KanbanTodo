@@ -8,6 +8,7 @@ import {
   groupByStatus,
   makeStatusChartData,
   STATUS_ORDER,
+  weekLabelKST,
 } from '@/widgets/chart'
 import { useMemo } from 'react'
 import { Bar, BarChart, Cell, XAxis, YAxis } from 'recharts'
@@ -17,6 +18,8 @@ export default function BarCharHorizontal() {
   const weekItems = useMemo(() => filterThisWeekKST(items), [items])
   const chartData = useMemo(() => makeStatusChartData(weekItems), [weekItems])
   const groupedThisWeek = useMemo(() => groupByStatus(weekItems), [weekItems])
+
+  const desc = useMemo(() => weekLabelKST(new Date()), [])
 
   const { topStatuses, topCount } = useMemo(() => {
     let max = 0
@@ -37,8 +40,7 @@ export default function BarCharHorizontal() {
     <Shadcn.Card>
       <Shadcn.CardHeader>
         <Shadcn.CardTitle>작업 상태(주간)</Shadcn.CardTitle>
-        {/* 이번주 출력 2024년도 9월 n주차 */}
-        <Shadcn.CardDescription>2024년도 9월 n주차 - 작업 필요</Shadcn.CardDescription>
+        <Shadcn.CardDescription>{desc}</Shadcn.CardDescription>
       </Shadcn.CardHeader>
       <Shadcn.CardContent>
         <Shadcn.ChartContainer config={barCharHorizontalConfig}>

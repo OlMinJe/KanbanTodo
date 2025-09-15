@@ -2,7 +2,7 @@
 
 import { useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
-import { barChartConfig, doneThisWeekByWeekday } from '@/widgets/chart'
+import { barChartConfig, doneThisWeekByWeekday, weekLabelKST } from '@/widgets/chart'
 import { TrendingUp } from 'lucide-react'
 import { useMemo } from 'react'
 import { Bar, BarChart as BaseBarChart, CartesianGrid, XAxis } from 'recharts'
@@ -10,13 +10,13 @@ import { Bar, BarChart as BaseBarChart, CartesianGrid, XAxis } from 'recharts'
 export default function BarChart() {
   const items = useTodoStore((s) => s.items)
   const data = useMemo(() => doneThisWeekByWeekday(items), [items])
+  const desc = useMemo(() => weekLabelKST(new Date()), [])
 
   return (
     <Shadcn.Card>
       <Shadcn.CardHeader>
         <Shadcn.CardTitle>완료율 주간 기록</Shadcn.CardTitle>
-        {/* 이번주 출력 2024년도 9월 n주차 */}
-        <Shadcn.CardDescription>2024년도 9월 n주차</Shadcn.CardDescription>
+        <Shadcn.CardDescription>{desc}</Shadcn.CardDescription>
       </Shadcn.CardHeader>
       <Shadcn.CardContent>
         <Shadcn.ChartContainer config={barChartConfig}>

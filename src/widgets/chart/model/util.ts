@@ -99,3 +99,20 @@ export function weekLabelKST(ref: Date = new Date()) {
 
   return `${yy}년도 ${mm}월 ${weekIndex}주차`
 }
+
+export function toWindowMs(t: TODO): [number, number] {
+  if (t.isRange) {
+    return [
+      msFromKST(t.dateStart ?? undefined, ensureHMS(t.timeStart ?? '00:00:00')),
+      msFromKST(t.dateEnd ?? undefined, ensureHMS(t.timeEnd ?? '23:59:59')),
+    ]
+  }
+  const s = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
+  return [s, s]
+}
+
+export function dayWindowMs(ymd: string): [number, number] {
+  const start = Date.parse(toISO(ymd, '00:00:00', KST_TZ)!)
+  const end = Date.parse(toISO(ymd, '23:59:59', KST_TZ)!)
+  return [start, end]
+}

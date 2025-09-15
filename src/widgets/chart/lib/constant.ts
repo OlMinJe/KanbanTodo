@@ -67,3 +67,32 @@ export const pieChartConfig = {
     color: 'var(--chart-5)',
   },
 } satisfies ChartConfig
+
+export const chartConfig = {
+  count: {
+    label: '작업 상태',
+  },
+  todo: {
+    label: 'todo',
+    color: 'var(--chart-1)',
+  },
+  doing: {
+    label: 'doing',
+    color: 'var(--chart-2)',
+  },
+  defer: {
+    label: 'defer',
+    color: 'var(--chart-3)',
+  },
+  done: {
+    label: 'done',
+    color: 'var(--chart-4)',
+  },
+  remove: {
+    label: 'remove',
+    color: 'var(--chart-5)',
+  },
+} satisfies ChartConfig
+
+export const DAY_MS = 86_400_000
+export const DAYS = 30 as const

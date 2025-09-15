@@ -44,11 +44,14 @@ export default function TimelineItem({ todo, history, renderMenu }: Props) {
 
             <p className="mt-1 text-sm text-muted-foreground">{todo.description || '-'}</p>
 
-            {history.meta?.reason ? (
-              <p className={`mt-1 text-sm text-muted-foreground" ${info.spanClass}`}>
-                {history.meta.reason}
-              </p>
-            ) : null}
+            <div className="flex items-center gap-1">
+              {history.meta?.mood && <span className="pr-1">{history.meta.mood}</span>}
+              {history.meta?.reason && (
+                <p className={`mt-1 text-sm text-muted-foreground" ${info.spanClass}`}>
+                  {history.meta.reason}
+                </p>
+              )}
+            </div>
 
             <div className="mt-1 text-xs text-muted-foreground">{todo.tags}</div>
           </div>

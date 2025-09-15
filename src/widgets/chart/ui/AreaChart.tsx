@@ -3,10 +3,9 @@
 import { TODO_STATUS, useTodoStore } from '@/entities/todo'
 import { KST_TZ, partsInTZ, toISO } from '@/shared/lib'
 import * as Shadcn from '@/shared/ui/shadcn'
+import { chartConfig, DAY_MS, DAYS, dayWindowMs, STATUS_ORDER, toWindowMs } from '@/widgets/chart'
 import { useMemo } from 'react'
 import { Area, AreaChart as BaseAreaChart, CartesianGrid, XAxis } from 'recharts'
-import { chartConfig, DAY_MS, DAYS, STATUS_ORDER } from '../lib/constant'
-import { dayWindowMs, toWindowMs } from '../model/util'
 
 type ROW = { date: string } & Record<(typeof STATUS_ORDER)[number], number>
 

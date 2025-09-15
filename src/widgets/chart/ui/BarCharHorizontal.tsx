@@ -3,9 +3,9 @@
 import { useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
 import {
-  barCharHorizontalConfig,
-  filterThisWeekKST,
+  filterWeekKST,
   groupByStatus,
+  horizontalConfig,
   makeStatusChartData,
   STATUS_ORDER,
   weekLabelKST,
@@ -15,7 +15,7 @@ import { Bar, BarChart, Cell, XAxis, YAxis } from 'recharts'
 
 export default function BarCharHorizontal() {
   const items = useTodoStore((s) => s.items)
-  const weekItems = useMemo(() => filterThisWeekKST(items), [items])
+  const weekItems = useMemo(() => filterWeekKST(items), [items])
   const chartData = useMemo(() => makeStatusChartData(weekItems), [weekItems])
   const groupedThisWeek = useMemo(() => groupByStatus(weekItems), [weekItems])
 
@@ -43,7 +43,7 @@ export default function BarCharHorizontal() {
         <Shadcn.CardDescription>{desc}</Shadcn.CardDescription>
       </Shadcn.CardHeader>
       <Shadcn.CardContent>
-        <Shadcn.ChartContainer config={barCharHorizontalConfig}>
+        <Shadcn.ChartContainer config={horizontalConfig}>
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -59,7 +59,7 @@ export default function BarCharHorizontal() {
               tickMargin={10}
               axisLine={false}
               tickFormatter={(value) =>
-                barCharHorizontalConfig[value as keyof typeof barCharHorizontalConfig]?.label
+                horizontalConfig[value as keyof typeof horizontalConfig]?.label
               }
             />
             <XAxis dataKey="count" type="number" hide />

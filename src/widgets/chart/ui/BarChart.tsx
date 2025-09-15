@@ -2,14 +2,14 @@
 
 import { useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
-import { barChartConfig, doneThisWeekByWeekday, weekLabelKST } from '@/widgets/chart'
+import { barChartConfig, doneWeekday, weekLabelKST } from '@/widgets/chart'
 import { TrendingUp } from 'lucide-react'
 import { useMemo } from 'react'
 import { Bar, BarChart as BaseBarChart, CartesianGrid, XAxis } from 'recharts'
 
 export default function BarChart() {
   const items = useTodoStore((s) => s.items)
-  const data = useMemo(() => doneThisWeekByWeekday(items), [items])
+  const data = useMemo(() => doneWeekday(items), [items])
   const desc = useMemo(() => weekLabelKST(new Date()), [])
 
   return (

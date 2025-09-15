@@ -2,14 +2,20 @@
 
 import { useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
+import {
+  chartConfig,
+  filterWeekKST,
+  groupByStatus,
+  makeStatusChartData,
+  STATUS_ORDER,
+  weekLabelKST,
+} from '@/widgets/chart'
 import { useMemo } from 'react'
 import { Cell, Label, Pie, PieChart } from 'recharts'
-import { pieChartConfig, STATUS_ORDER } from '../lib/constant'
-import { filterThisWeekKST, groupByStatus, makeStatusChartData, weekLabelKST } from '../model/util'
 
 export default function PieChartCountText() {
   const items = useTodoStore((s) => s.items)
-  const weekItems = useMemo(() => filterThisWeekKST(items), [items])
+  const weekItems = useMemo(() => filterWeekKST(items), [items])
   const chartData = useMemo(() => makeStatusChartData(weekItems), [weekItems])
   const groupedThisWeek = useMemo(() => groupByStatus(weekItems), [weekItems])
 
@@ -34,10 +40,7 @@ export default function PieChartCountText() {
       </Shadcn.CardHeader>
 
       <Shadcn.CardContent className="flex-1 pb-0">
-        <Shadcn.ChartContainer
-          config={pieChartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
+        <Shadcn.ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
           <PieChart>
             <Shadcn.ChartTooltip
               cursor={false}
@@ -53,7 +56,7 @@ export default function PieChartCountText() {
                   const labels =
                     topStatuses.length > 0
                       ? topStatuses
-                          .map((s) => pieChartConfig[s as keyof typeof pieChartConfig]?.label ?? s)
+                          .map((s) => chartConfig[s as keyof typeof chartConfig]?.label ?? s)
                           .join(', ')
                       : '데이터 없음'
                   return (

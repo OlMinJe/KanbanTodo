@@ -1,5 +1,5 @@
 export * from '@/shared/theme/constants'
 export { default as getInitialTheme } from '@/shared/theme/getInitialTheme'
+export * from '@/shared/theme/store'
 export { default as ThemeToggle } from '@/shared/theme/ThemeToggle'
 export * from '@/shared/theme/types'
-export * from '@/shared/theme/useTheme'

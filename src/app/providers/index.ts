@@ -1,2 +1,2 @@
 export { default as AlertProvider } from '@/app/providers/AlertProvider'
-export * from '@/shared/theme/ThemeProvider'
+export * from '@/shared/theme/store'

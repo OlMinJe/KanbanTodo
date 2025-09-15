@@ -9,7 +9,7 @@ import type {
 import { useTodoStore } from '@/entities/todo'
 
 export async function createTodo(payload: SUBMIT_PAYLOAD): Promise<TODO> {
-  return useTodoStore.getState().createFromPayload(payload)
+  return useTodoStore.getState().createTodo(payload)
 }
 
 export async function listTodos(opts?: LIST_PAYLOAD): Promise<LIST_RESULT> {
@@ -29,13 +29,6 @@ export async function updateTodo(
   payload: Partial<TODO> & { meta?: TODO_HISTORY['meta'] }
 ): Promise<TODO | undefined> {
   return useTodoStore.getState().updateTodo(id, payload)
-}
-
-export async function updateTodoFromPayload(
-  id: string,
-  payload: SUBMIT_PAYLOAD
-): Promise<TODO | undefined> {
-  return useTodoStore.getState().updateFromPayload(id, payload)
 }
 
 export async function removeTodo(id: string): Promise<boolean> {

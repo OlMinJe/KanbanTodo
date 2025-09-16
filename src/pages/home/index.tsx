@@ -1,6 +1,6 @@
-import { Toolbar } from '@/features/todoToolbar'
 import { Board } from '@/widgets/todoBoard'
 import { Calendar } from '@/widgets/todoCalendar'
+import { Toolbar } from '@/widgets/todoToolbar'
 
 export default function Home() {
   return (

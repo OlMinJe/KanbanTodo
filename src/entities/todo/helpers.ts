@@ -120,12 +120,12 @@ export const matchQuery = (t: TODO, q?: string) => {
 
 export const includesYMD = (todo: TODO, ymd: string): boolean => {
   if ((todo as any).isRange) {
-    const start = (todo as any).dateStart ?? fromISO((todo as any).startsAt)
-    const end = (todo as any).dateEnd ?? fromISO((todo as any).endsAt)
+    const start = (todo as any).dateStart
+    const end = (todo as any).dateEnd
     if (!start || !end) return false
     return start <= ymd && ymd <= end
   } else {
-    const single = (todo as any).dateSingle ?? fromISO((todo as any).scheduledAt)
+    const single = (todo as any).dateSingle
     return !!single && single === ymd
   }
 }

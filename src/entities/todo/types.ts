@@ -16,10 +16,13 @@ export type SUBMIT_PAYLOAD = {
   schedule: SCHEDULE
 }
 
+export type SORT_BY = 'at' | 'priority' | 'title' | 'status' | 'updatedAt' | 'createdAt'
+export type SORT_ORDER = 'asc' | 'desc'
+
 export type LIST_PAYLOAD = {
   page?: number
   pageSize?: number
-  sortBy?: 'updatedAt' | 'createdAt' | 'title'
+  sortBy?: SORT_BY
   order?: 'asc' | 'desc'
   filter?: TODO_FILTER
 }

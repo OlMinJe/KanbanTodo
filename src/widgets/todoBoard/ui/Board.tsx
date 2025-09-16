@@ -1,42 +1,15 @@
-import type { STATUS_TYPE } from '@/entities/todo'
-import { filterTodos, type TODO, TODO_STATUS, useTodoStore } from '@/entities/todo'
+import type { STATUS_TYPE, TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import { STATUS_LABELS, TodoFormRead } from '@/features/todoDialog'
-import { Card, Column, Menu } from '@/widgets/todoBoard'
-import { useMemo } from 'react'
+import { Card, Column, Menu, useBoard } from '@/widgets/todoBoard'
 
 export default function Board() {
-  const items = useTodoStore((s) => s.items)
-  const selectedDateYMD = useTodoStore((s) => s.selectedDateYMD)
-
-  const todos = useMemo(
-    () => filterTodos(items, { date: selectedDateYMD }),
-    [items, selectedDateYMD]
-  )
-
-  const byStatus = useMemo(() => {
-    const g: Record<STATUS_TYPE, TODO[]> = {
-      [TODO_STATUS.TODO]: [],
-      [TODO_STATUS.DOING]: [],
-      [TODO_STATUS.DEFER]: [],
-      [TODO_STATUS.DONE]: [],
-      [TODO_STATUS.REMOVE]: [],
-    }
-    for (const t of todos) g[t.status]?.push(t)
-    return g
-  }, [todos])
-
-  const ORDER: STATUS_TYPE[] = [
-    TODO_STATUS.TODO,
-    TODO_STATUS.DOING,
-    TODO_STATUS.DEFER,
-    TODO_STATUS.DONE,
-  ]
+  const { ORDER, byStatus } = useBoard()
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1">
-      {ORDER.map((status) => {
-        const list = byStatus[status]
+      {ORDER.map((status: STATUS_TYPE) => {
+        const list = byStatus[status] as TODO[]
         return (
           <Column
             key={status}

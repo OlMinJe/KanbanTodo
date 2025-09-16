@@ -26,7 +26,6 @@ const EMPTY_TODO: TODO = {
   status: 'todo',
   priority: 'P2',
   description: null,
-  isRange: false,
   tags: [],
   createdAt: '',
   updatedAt: '',

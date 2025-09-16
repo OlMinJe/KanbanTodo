@@ -45,13 +45,8 @@ export function filterWeekKST(items: TODO[], ref: Date = new Date()) {
 
   return items.filter((t) => {
     let sMs: number, eMs: number
-    if (t.isRange) {
-      sMs = msFromKST(t.dateStart ?? undefined, ensureHMS(t.timeStart ?? '00:00:00'))
-      eMs = msFromKST(t.dateEnd ?? undefined, ensureHMS(t.timeEnd ?? '23:59:59'))
-    } else {
-      sMs = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
-      eMs = sMs
-    }
+    sMs = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
+    eMs = sMs
     if (Number.isNaN(sMs) || Number.isNaN(eMs)) return false
     return eMs >= startMs && sMs <= endMs
   })
@@ -64,8 +59,8 @@ export function doneWeekday(items: TODO[]) {
   for (const t of week) {
     if (t.status !== TODO_STATUS.DONE) continue
 
-    const ymd = t.isRange ? (t.dateStart ?? t.dateEnd) : t.dateSingle
-    const hms = t.isRange ? (t.timeStart ?? '00:00:00') : (t.timeSingle ?? '00:00:00')
+    const ymd = t.dateSingle
+    const hms = t.timeSingle ?? '00:00:00'
     const ms = msFromKST(ymd ?? undefined, ensureHMS(hms))
     if (Number.isNaN(ms)) continue
 
@@ -101,12 +96,6 @@ export function weekLabelKST(ref: Date = new Date()) {
 }
 
 export function toWindowMs(t: TODO): [number, number] {
-  if (t.isRange) {
-    return [
-      msFromKST(t.dateStart ?? undefined, ensureHMS(t.timeStart ?? '00:00:00')),
-      msFromKST(t.dateEnd ?? undefined, ensureHMS(t.timeEnd ?? '23:59:59')),
-    ]
-  }
   const s = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
   return [s, s]
 }

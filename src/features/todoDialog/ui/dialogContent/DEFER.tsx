@@ -35,8 +35,8 @@ export default function Defer(props: {
         />
         <div className="flex flex-col gap-3">
           <InputField
-            id="retry-time"
-            name="range-time"
+            id="retryTime"
+            name="retryTime"
             label="재시도 시간"
             required={true}
             error={error}

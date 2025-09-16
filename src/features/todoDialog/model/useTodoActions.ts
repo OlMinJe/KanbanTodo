@@ -32,15 +32,8 @@ export function useTodoActions({ todo, onDone }: Params) {
   const toSubmitPayload = useCallback(() => {
     const p = buildPayload()
     const nowISO = new Date().toISOString()
-    const plus30m = new Date(Date.now() + 30 * 60 * 1000).toISOString()
-    const schedule =
-      p.schedule.type === 'single'
-        ? ({ type: 'single', at: (p.schedule.at as string) ?? nowISO } as const)
-        : ({
-            type: 'range',
-            start: (p.schedule.start as string) ?? nowISO,
-            end: (p.schedule.end as string) ?? plus30m,
-          } as const)
+    const schedule = { type: 'single', at: (p.schedule.at as string) ?? nowISO } as const
+
     return {
       title: p.title,
       status: (p.status || undefined) as STATUS_TYPE | undefined,
@@ -60,35 +53,14 @@ export function useTodoActions({ todo, onDone }: Params) {
         status: (status || base.status) as STATUS_TYPE,
         priority: (priority || base.priority) as PRIORITY_TYPE,
         description: description?.trim() || null,
-        isRange: schedule.type === 'range',
       }
 
-      if (schedule.type === 'single') {
-        const at = schedule.at ?? new Date().toISOString()
-        const { date, time } = fromISO(at)
-        next = {
-          ...next,
-          isRange: false,
-          dateSingle: date,
-          timeSingle: time,
-          dateStart: undefined,
-          timeStart: undefined,
-          dateEnd: undefined,
-          timeEnd: undefined,
-        }
-      } else {
-        const s = fromISO(schedule.start ?? new Date().toISOString())
-        const e = fromISO(schedule.end ?? new Date(Date.now() + 30 * 60 * 1000).toISOString())
-        next = {
-          ...next,
-          isRange: true,
-          dateStart: s.date,
-          timeStart: s.time,
-          dateEnd: e.date,
-          timeEnd: e.time,
-          dateSingle: undefined,
-          timeSingle: undefined,
-        }
+      const at = schedule.at ?? new Date().toISOString()
+      const { date, time } = fromISO(at)
+      next = {
+        ...next,
+        dateSingle: date,
+        timeSingle: time,
       }
       return next
     },

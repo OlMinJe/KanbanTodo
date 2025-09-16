@@ -6,13 +6,8 @@ export const INITIAL_STATE = {
   status: '' as STATUS_TYPE | '',
   priority: '' as PRIORITY_TYPE | '',
   description: '',
-  isRange: false,
   dateSingle: null as Date | null,
   timeSingle: '',
-  dateStart: null as Date | null,
-  timeStart: '',
-  dateEnd: null as Date | null,
-  timeEnd: '',
   editOpen: false,
   editVariant: undefined as STATUS_TYPE | undefined,
   errors: {} as Record<string, string | undefined>,
@@ -28,13 +23,8 @@ export type INIT_OPTION =
         status: STATUS_TYPE | ''
         priority: PRIORITY_TYPE | ''
         description: string
-        isRange: boolean
         dateSingle: Date | null
         timeSingle: string
-        dateStart: Date | null
-        timeStart: string
-        dateEnd: Date | null
-        timeEnd: string
       }>
     }
 

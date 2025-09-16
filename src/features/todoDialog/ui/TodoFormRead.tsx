@@ -55,23 +55,10 @@ export default function TodoFormRead({
   const display = useMemo(() => {
     if (!todo) return null
 
-    if (todo.isRange) {
-      const start = pickParts(todo, 'startsAt', 'dateStart', 'timeStart')
-      const end = pickParts(todo, 'endsAt', 'dateEnd', 'timeEnd')
-      return {
-        isRange: true,
-        startDate: start.date ?? '-',
-        startTime: start.time ?? '-',
-        endDate: end.date ?? '-',
-        endTime: end.time ?? '-',
-      }
-    } else {
-      const single = pickParts(todo, 'scheduledAt', 'dateSingle', 'timeSingle')
-      return {
-        isRange: false,
-        date: single.date ?? '-',
-        time: single.time ?? '-',
-      }
+    const single = pickParts(todo, 'scheduledAt', 'dateSingle', 'timeSingle')
+    return {
+      dateSingle: single.date ?? '-',
+      timeSingle: single.time ?? '-',
     }
   }, [todo])
 
@@ -91,23 +78,10 @@ export default function TodoFormRead({
           <span className="text-sm font-medium">기간</span>
         </div>
 
-        {display.isRange ? (
-          <div className="flex gap-5">
-            <div className="flex gap-4">
-              <ReadField label="시작 날짜" value={display.startDate} />
-              <ReadField label="시작 시간" value={display.startTime} />
-            </div>
-            <div className="flex gap-4">
-              <ReadField label="종료 날짜" value={display.endDate} />
-              <ReadField label="종료 시간" value={display.endTime} />
-            </div>
-          </div>
-        ) : (
-          <div className="flex gap-4">
-            <ReadField label="날짜" value={display.date} />
-            <ReadField label="시간" value={display.time} />
-          </div>
-        )}
+        <div className="flex gap-4">
+          <ReadField label="날짜" value={display.dateSingle} />
+          <ReadField label="시간" value={display.timeSingle} />
+        </div>
       </section>
 
       {todo.description?.trim() && (

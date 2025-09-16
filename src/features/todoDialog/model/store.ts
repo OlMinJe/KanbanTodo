@@ -13,13 +13,8 @@ const ERROR_CLEAR_MAP: Partial<Record<keyof TODO, (keyof (typeof INITIAL_STATE)[
   title: ['title'],
   status: ['status'],
   priority: ['priority'],
-  isRange: ['date', 'time', 'dateStart', 'timeStart', 'dateEnd', 'timeEnd', 'range'],
-  dateSingle: ['date'],
-  timeSingle: ['time'],
-  dateStart: ['dateStart', 'range'],
-  timeStart: ['timeStart', 'range'],
-  dateEnd: ['dateEnd', 'range'],
-  timeEnd: ['timeEnd', 'range'],
+  dateSingle: ['dateSingle'],
+  timeSingle: ['timeSingle'],
 }
 
 export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
@@ -38,13 +33,8 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
         status: rec.status ?? '',
         priority: rec.priority ?? '',
         description: rec.description ?? '',
-        isRange: !!rec.isRange,
         dateSingle: rec.dateSingle ? new Date(rec.dateSingle) : null,
         timeSingle: rec.timeSingle ?? '',
-        dateStart: rec.dateStart ? new Date(rec.dateStart) : null,
-        timeStart: rec.timeStart ?? '',
-        dateEnd: rec.dateEnd ? new Date(rec.dateEnd) : null,
-        timeEnd: rec.timeEnd ?? '',
         errors: {},
         editVariant: rec.status,
       }))
@@ -56,7 +46,6 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
         ...s,
         status: s.status || 'todo',
         priority: s.priority || 'P2',
-        isRange: false,
         dateSingle: s.dateSingle ?? new Date(),
         timeSingle: s.timeSingle || hhmm,
         errors: {},
@@ -112,30 +101,14 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
 
   validateSchedule: () => {
     const s = get()
-    const next = makeScheduleErrors(
-      s.isRange,
-      s.dateSingle,
-      s.timeSingle,
-      s.dateStart,
-      s.timeStart,
-      s.dateEnd,
-      s.timeEnd
-    )
+    const next = makeScheduleErrors(s.dateSingle, s.timeSingle)
     set({ errors: { ...s.errors, ...next } })
     return Object.values(next).every((v) => !v)
   },
 
   buildPayload: () => {
     const s = get()
-    const schedule = buildSchedule(
-      s.isRange,
-      s.dateSingle,
-      s.timeSingle,
-      s.dateStart,
-      s.timeStart,
-      s.dateEnd,
-      s.timeEnd
-    )
+    const schedule = buildSchedule(s.dateSingle, s.timeSingle)
     return {
       title: s.title,
       status: s.status,

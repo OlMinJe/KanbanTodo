@@ -1,6 +1,6 @@
 import { type STATUS_TYPE } from '@/entities/todo'
 import { cn } from '@/shared/lib'
-import { STATUS_TONE } from '../lib/theme'
+import { STATUS_TONE } from '@/widgets/todoBoard'
 
 type Props = {
   status: STATUS_TYPE
@@ -19,7 +19,7 @@ export default function Column({ status, title, count, children }: Props) {
       <header className="sticky top-0 z-10 flex items-center justify-between px-3 py-2 border-b">
         <div className="flex items-center gap-2">
           <span className={cn('h-2.5 w-2.5 rounded-full', tone.dot)} />
-          <h2 className={cn('text-sm font-semibold', tone.text)}>{title}</h2>
+          <h2 className={cn('text-sm font-semibold')}>{title}</h2>
         </div>
         <span
           className={cn(

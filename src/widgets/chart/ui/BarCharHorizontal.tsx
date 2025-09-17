@@ -37,7 +37,7 @@ export default function BarCharHorizontal() {
   const pct = total ? (topCount / total) * 100 : 0
 
   return (
-    <Shadcn.Card>
+    <Shadcn.Card className="content-around">
       <Shadcn.CardHeader>
         <Shadcn.CardTitle>작업 상태(주간)</Shadcn.CardTitle>
         <Shadcn.CardDescription>{desc}</Shadcn.CardDescription>
@@ -49,7 +49,7 @@ export default function BarCharHorizontal() {
             data={chartData}
             layout="vertical"
             margin={{
-              left: -20,
+              left: -10,
             }}
           >
             <YAxis
@@ -76,11 +76,14 @@ export default function BarCharHorizontal() {
         </Shadcn.ChartContainer>
       </Shadcn.CardContent>
       <Shadcn.CardFooter className="text-sm flex-col gap-1">
-        <p>
-          <b>{topStatuses}</b>
-          {pct.toFixed(2)}% ({topCount}/{total})
-        </p>
-        <p>로 가장 높은 비율을 차지합니다!</p>
+        <div>
+          <b>{topStatuses}</b> <span className="text-red-400">{pct.toFixed(2)}%</span>
+          <span className="text-gray-400">
+            ({topCount}/{total})
+          </span>
+          로
+        </div>
+        <p>가장 높은 비율을 차지합니다!</p>
       </Shadcn.CardFooter>
     </Shadcn.Card>
   )

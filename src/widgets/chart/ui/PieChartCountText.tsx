@@ -33,14 +33,14 @@ export default function PieChartCountText() {
   }, [groupedThisWeek, weekItems.length])
 
   return (
-    <Shadcn.Card className="flex flex-col">
-      <Shadcn.CardHeader className="items-center pb-0">
+    <Shadcn.Card>
+      <Shadcn.CardHeader>
         <Shadcn.CardTitle>작업 상태(주간)</Shadcn.CardTitle>
         <Shadcn.CardDescription>{desc}</Shadcn.CardDescription>
       </Shadcn.CardHeader>
 
       <Shadcn.CardContent className="flex-1 pb-0">
-        <Shadcn.ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
+        <Shadcn.ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[210px]">
           <PieChart>
             <Shadcn.ChartTooltip
               cursor={false}

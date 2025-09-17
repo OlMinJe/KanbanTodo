@@ -8,10 +8,8 @@ export default function StatsChart() {
           <PieChartCountText />
           <BarCharHorizontal />
         </div>
-
         <BarChart />
       </div>
-
       <AreaChart />
     </div>
   )

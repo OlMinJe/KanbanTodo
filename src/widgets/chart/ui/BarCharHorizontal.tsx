@@ -1,5 +1,3 @@
-'use client'
-
 import { useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
 import {
@@ -21,7 +19,7 @@ export default function BarCharHorizontal() {
 
   const desc = useMemo(() => weekLabelKST(new Date()), [])
 
-  const { topStatuses, topCount } = useMemo(() => {
+  const { topStatuses, topCount, total } = useMemo(() => {
     let max = 0
     for (const s of STATUS_ORDER) {
       const n = groupedThisWeek[s]?.length ?? 0
@@ -30,10 +28,10 @@ export default function BarCharHorizontal() {
     return {
       topStatuses: STATUS_ORDER.filter((s) => (groupedThisWeek[s]?.length ?? 0) === max),
       topCount: max,
+      total: weekItems.length,
     }
-  }, [groupedThisWeek])
+  }, [groupedThisWeek, weekItems.length])
 
-  const total = items.length
   const pct = total ? (topCount / total) * 100 : 0
 
   return (

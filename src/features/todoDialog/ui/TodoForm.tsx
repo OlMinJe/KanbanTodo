@@ -177,9 +177,18 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
               <Button
                 type="button"
                 className="text-red-500"
-                onClick={() => {
+                onClick={async () => {
                   if (!validateCore() || !validateSchedule()) return
                   openEditForStatus((status || TODO_STATUS.TODO) as STATUS_TYPE)
+
+                  const next = (status || TODO_STATUS.TODO) as STATUS_TYPE
+                  const prev = (current?.status || TODO_STATUS.TODO) as STATUS_TYPE
+
+                  if (next === prev) {
+                    await confirmUpdate(undefined as any)
+                    return
+                  }
+                  openEditForStatus(next)
                 }}
               >
                 수정하기

@@ -1,5 +1,3 @@
-'use client'
-
 import { useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
 import {

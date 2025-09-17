@@ -1,5 +1,3 @@
-'use client'
-
 import { TODO_STATUS, useTodoStore } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { barChartConfig, doneWeekday, filterWeekKST, weekLabelKST } from '@/widgets/chart'

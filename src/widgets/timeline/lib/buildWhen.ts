@@ -8,8 +8,6 @@ export function buildWhen(dateSingle: string, timeSingle: string): { date: strin
     }
   }
 
-  console.log(typeof dateSingle)
-
   const ymd = typeof dateSingle === 'string' ? dateSingle.slice(0, 10) : asYMD(dateSingle)
   const hms = ensureHMS(timeSingle ?? '00:00:00')
   const ms = msFromKST(ymd, hms)

@@ -1,4 +1,4 @@
-import { type STATUS_TYPE, type TODO, type TODO_HISTORY } from '@/entities/todo'
+import { TODO_STATUS, type STATUS_TYPE, type TODO, type TODO_HISTORY } from '@/entities/todo'
 import { partsInTZ } from '@/shared/lib'
 import { Badge } from '@/shared/ui/shadcn'
 import { TYPE_INFO, buildWhen } from '@/widgets/timeline'
@@ -75,7 +75,9 @@ export default function TimelineItem({ todo, history, renderMenu }: Props) {
           </div>
         </div>
 
-        <div className="ml-auto shrink-0 flex flex-col items-end gap-2">{renderMenu}</div>
+        {(history.to as STATUS_TYPE) !== TODO_STATUS.REMOVE && (
+          <div className="ml-auto shrink-0 flex flex-col items-end gap-2">{renderMenu}</div>
+        )}
       </div>
     </div>
   )

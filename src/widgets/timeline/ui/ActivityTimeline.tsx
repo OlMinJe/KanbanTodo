@@ -21,7 +21,7 @@ export default function ActivityTimeline() {
         <div className="flex items-center mb-3">
           <h2 className="text-base font-semibold">타임라인</h2>
           <Separator orientation="vertical" className="mx-1 h-4" />
-          <span className="text-sm text-muted-foreground">활동 히스토리</span>
+          <span className="text-xs text-muted-foreground">활동 히스토리</span>
         </div>
         <div className="flex items-center justify-between">
           <div>

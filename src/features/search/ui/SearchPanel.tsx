@@ -1,10 +1,5 @@
-import {
-  TODO_STATUS,
-  type PRIORITY_TYPE,
-  type SORT_BY,
-  type SORT_ORDER,
-  type STATUS_TYPE,
-} from '@/entities/todo'
+import type { PRIORITY_TYPE, SORT_BY, SORT_ORDER, STATUS_TYPE } from '@/entities/todo'
+import { TODO_STATUS } from '@/entities/todo'
 import { SearchField } from '@/features/search'
 
 type PROPS = {
@@ -27,7 +22,7 @@ const STATUS_OPTIONS = [
   { key: TODO_STATUS.DOING, label: '진행중' },
   { key: TODO_STATUS.DEFER, label: '보류' },
   { key: TODO_STATUS.DONE, label: '완료' },
-  { key: TODO_STATUS.REMOVE, label: '삭제됨' },
+  { key: TODO_STATUS.REMOVE, label: '삭제' },
 ]
 
 export default function SearchPanel(props: PROPS) {
@@ -47,7 +42,7 @@ export default function SearchPanel(props: PROPS) {
   } = props
   return (
     <>
-      <label className="mb-2 block text-xs text-gray-600">검색어</label>
+      <label className="mb-2 block text-xs text-gray-600 ">검색어</label>
       <SearchField
         className="mb-3"
         value={q}

@@ -29,7 +29,7 @@ export default function ActivityTimeline() {
           </div>
           <button
             type="button"
-            className="rounded p-1 hover:bg-gray-100"
+            className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
             onClick={() => setOpen(!open)}
             aria-label="Filter, Search and Sort"
           >
@@ -38,10 +38,10 @@ export default function ActivityTimeline() {
         </div>
 
         {open && (
-          <div className="absolute right-5 top-20 z-10 w-72 rounded-xl border bg-white p-3 shadow-xl">
+          <div className="absolute right-5 top-20 z-10 w-72 rounded-xl border bg-white dark:bg-black p-3 shadow-xl">
             <div className="mb-2 flex items-start justify-end">
               <button
-                className="rounded p-1 hover:bg-gray-100"
+                className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
               >

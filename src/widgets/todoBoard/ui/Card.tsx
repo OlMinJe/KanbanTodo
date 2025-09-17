@@ -1,6 +1,5 @@
 import { type TODO } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
-import { Ellipsis } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 type Props = {
@@ -18,11 +17,7 @@ export default function Card({ todo, renderMenu }: Props) {
         >
           {todo.title}
         </Shadcn.CardTitle>
-        {renderMenu ?? (
-          <button type="button" className="opacity-60">
-            <Ellipsis width={18} height={18} />
-          </button>
-        )}
+        {renderMenu}
       </Shadcn.CardHeader>
 
       <Shadcn.CardContent className="text-sm flex-1 flex flex-col gap-1 p-0">

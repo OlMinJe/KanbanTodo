@@ -46,7 +46,7 @@ export default function EditDialog(props: EDIT_DIALOG_PROPS) {
     onSuccess?.({
       reason: reason.trim(),
       mood,
-      retryDate: retryDate ? asYMD(retryDate) : undefined,
+      retryDate: retryDate ?? asYMD(retryDate),
       retryTime: ensureHMS(retryTime),
     })
   }

@@ -96,6 +96,11 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
           updatedAt: now,
         }
 
+        if (patch.meta?.retryDate && patch.meta?.retryTime) {
+          next.dateSingle = patch.meta?.retryDate
+          next.timeSingle = patch.meta?.retryTime
+        }
+
         if (patch.status && patch.status !== prev.status) {
           const entry = {
             at: now,
@@ -103,8 +108,7 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
             to: patch.status,
             meta: patch.meta,
           }
-          next.dateSingle = patch.meta?.retryDate
-          next.timeSingle = patch.meta?.retryTime
+
           next.history = [...(prev.history ?? []), entry]
         }
 

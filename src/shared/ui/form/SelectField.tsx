@@ -40,7 +40,7 @@ export default function SelectField(props: SELECT_FIELD_PROPS) {
     >
       {(common) => (
         <Select value={controlledValue} onValueChange={(v) => onValueChange?.(v)}>
-          <SelectTrigger className={cn('w-[160px]', triggerClassName)} {...common}>
+          <SelectTrigger className={cn('min-w-[150px]', triggerClassName)} {...common}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>

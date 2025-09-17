@@ -11,7 +11,7 @@ export default function ScheduleSection(props: {
   const { state, display, handlers } = useScheduleFields({ openedAt })
 
   return (
-    <fieldset className="mt-4 space-y-3">
+    <fieldset className="mb-3">
       <legend className="sr-only">날짜/시간</legend>
 
       <div className="flex gap-4">
@@ -20,7 +20,8 @@ export default function ScheduleSection(props: {
           name="single-date"
           label="날짜"
           required
-          containerClassName="flex flex-col gap-3"
+          containerClassName="basis-1/2 min-w-0"
+          triggerClassName="w-full"
           value={state.dateSingle}
           onValueChange={(d) => handlers.onChangeSingleDate(d ?? new Date())}
           error={errors?.dateSingle}
@@ -30,7 +31,8 @@ export default function ScheduleSection(props: {
           name="single-time"
           label="시간"
           required
-          containerClassName="flex flex-col gap-3"
+          containerClassName="basis-1/2 min-w-0"
+          className="w-full"
           type="time"
           step="1"
           value={display.timeSingle}

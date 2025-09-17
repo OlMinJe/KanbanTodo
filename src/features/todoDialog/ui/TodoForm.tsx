@@ -78,10 +78,10 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
 
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <fieldset className="mb-5">
+      <fieldset className="mb-3">
         <legend className="sr-only">필수 입력 정보</legend>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col flex-1 gap-3">
           <InputField
             id="title"
             name="title"
@@ -94,31 +94,34 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
             error={errors.title}
           />
 
-          <SelectField
-            id="todo-state"
-            name="todo-state"
-            label="작업 상태"
-            required
-            placeholder="작업 상태"
-            triggerClassName="w-[120px]"
-            options={TASK_STATUS_OPTIONS}
-            value={status ?? ''}
-            onValueChange={(v) => setField('status', v as STATUS_TYPE | '')}
-            error={errors.status}
-          />
-
-          <SelectField
-            id="priority"
-            name="priority"
-            label="작업 순위"
-            required
-            placeholder="작업 순위"
-            triggerClassName="w-[120px]"
-            options={PRIORITY_OPTIONS}
-            value={priority ?? ''}
-            onValueChange={(v) => setField('priority', v as PRIORITY_TYPE | '')}
-            error={errors.priority}
-          />
+          <div className="flex gap-3">
+            <SelectField
+              id="todo-state"
+              name="todo-state"
+              label="작업 상태"
+              required
+              placeholder="작업 상태"
+              containerClassName="basis-1/2 min-w-0"
+              triggerClassName="w-full"
+              options={TASK_STATUS_OPTIONS}
+              value={status ?? ''}
+              onValueChange={(v) => setField('status', v as STATUS_TYPE | '')}
+              error={errors.status}
+            />
+            <SelectField
+              id="priority"
+              name="priority"
+              label="작업 순위"
+              required
+              placeholder="작업 순위"
+              containerClassName="basis-1/2 min-w-0"
+              triggerClassName="w-full"
+              options={PRIORITY_OPTIONS}
+              value={priority ?? ''}
+              onValueChange={(v) => setField('priority', v as PRIORITY_TYPE | '')}
+              error={errors.priority}
+            />
+          </div>
         </div>
       </fieldset>
 
@@ -138,7 +141,7 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
         />
       </fieldset>
 
-      <div className="flex justify-between">
+      <div className="flex justify-end">
         {mode !== 'create' && (
           <BaseDialog
             title={STATUS_DIALOG_TEXT[TODO_STATUS.REMOVE].title}

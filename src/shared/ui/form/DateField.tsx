@@ -1,4 +1,4 @@
-import { fmt } from '@/shared/lib'
+import { cn, fmt } from '@/shared/lib'
 import { BaseField, type DATE_TYPE, type TRIGGER_PROPS } from '@/shared/ui/form'
 import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/shadcn'
 import { ChevronDownIcon } from 'lucide-react'
@@ -14,7 +14,7 @@ type DATE_FIELD_PROPS = TRIGGER_PROPS & {
 export default function DateField(props: DATE_FIELD_PROPS) {
   const { id, name, label, required, hint, error, containerClassName, placeholder, ...restProps } =
     props
-  const { disabled = false, value, onChange, open, onOpenChange } = restProps
+  const { disabled = false, value, onChange, open, onOpenChange, triggerClassName } = restProps
 
   const selected = useMemo(() => {
     if (!value) return undefined
@@ -46,7 +46,7 @@ export default function DateField(props: DATE_FIELD_PROPS) {
               type="button"
               variant="outline"
               disabled={disabled}
-              className="w-40 justify-between font-normal"
+              className={cn('w-40 justify-between font-normal', triggerClassName)}
               {...common}
             >
               <span>{displayText}</span>

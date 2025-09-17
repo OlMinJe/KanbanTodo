@@ -68,6 +68,8 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
           at: now,
           from: record.status,
           to: record.status,
+          prevDate: record.dateSingle,
+          prevTime: record.timeSingle,
         }
 
         const withHistory: TODO = {
@@ -101,6 +103,8 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
             to: patch.status,
             meta: patch.meta,
           }
+          next.dateSingle = patch.meta?.retryDate
+          next.timeSingle = patch.meta?.retryTime
           next.history = [...(prev.history ?? []), entry]
         }
 

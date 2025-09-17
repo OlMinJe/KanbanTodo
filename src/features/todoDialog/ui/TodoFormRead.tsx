@@ -95,7 +95,7 @@ export default function TodoFormRead({
         <BaseDialog
           title={PROPS_INFO.update.title}
           des={PROPS_INFO.update.description}
-          trigger={<Button type="button">수정하기</Button>}
+          trigger={<Button type="button">수정</Button>}
         >
           {({ close }) => <TodoForm type="update" todoId={todo.id} onCancel={close} />}
         </BaseDialog>
@@ -105,7 +105,7 @@ export default function TodoFormRead({
           des={STATUS_DIALOG_TEXT.remove.description}
           trigger={
             <Button type="button" className="text-red-500">
-              삭제하기
+              삭제
             </Button>
           }
           render={({ close }) => (

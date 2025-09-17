@@ -148,7 +148,7 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
             des={STATUS_DIALOG_TEXT[TODO_STATUS.REMOVE].description}
             trigger={
               <Button type="button" className="text-red-500">
-                삭제하기
+                삭제
               </Button>
             }
             render={({ close }) => (
@@ -194,7 +194,7 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
                   openEditForStatus(next)
                 }}
               >
-                수정하기
+                수정
               </Button>
 
               <BaseDialog

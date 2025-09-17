@@ -36,7 +36,7 @@ export default function Menu({ todo }: { todo: TODO }) {
           des={PROPS_INFO.update.description}
           trigger={
             <Shadcn.DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              수정
+              수정하기
             </Shadcn.DropdownMenuItem>
           }
         >
@@ -51,7 +51,7 @@ export default function Menu({ todo }: { todo: TODO }) {
           des={STATUS_DIALOG_TEXT.remove.description}
           trigger={
             <Shadcn.DropdownMenuItem className="text-red-400" onSelect={(e) => e.preventDefault()}>
-              삭제
+              삭제하기
               <Shadcn.MenubarShortcut>
                 <Trash2 />
               </Shadcn.MenubarShortcut>

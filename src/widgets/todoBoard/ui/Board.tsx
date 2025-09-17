@@ -7,7 +7,7 @@ export default function Board() {
   const { ORDER, byStatus } = useBoard()
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {ORDER.map((status: STATUS_TYPE) => {
         const list = byStatus[status] as TODO[]
         return (
@@ -52,7 +52,7 @@ export default function Board() {
                 />
               ))
             ) : (
-              <p>아직 일정이 없습니다!</p>
+              <div className="text-gray-500 text-sm">아직 일정이 없습니다!</div>
             )}
           </Column>
         )

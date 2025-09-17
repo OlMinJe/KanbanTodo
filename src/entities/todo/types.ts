@@ -40,12 +40,16 @@ export type LIST_RESULT = {
 export type TODO_STATUS_META = {
   reason?: string // 삭제/보류/되돌리기 사유 등
   mood?: string // 완료 시 선택한 이모지
+  retryDate?: string
+  retryTime?: string
 }
 
 export type TODO_HISTORY = {
   at: string // 기록 시각(ISO)
   from: STATUS_TYPE // 이전 상태
   to: STATUS_TYPE // 바뀐 상태
+  prevDate?: string
+  prevTime?: string
   meta?: TODO_STATUS_META
 }
 

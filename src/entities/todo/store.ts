@@ -181,7 +181,13 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
         )
       },
       clearAll: () => set(() => ({ items: [] })),
-      setSelectedDate: (d) => set({ selectedDateYMD: d ? asYMD(d) : undefined }),
+      setSelectedDate: (d) => {
+        set((prev) => {
+          const ymd = d ? asYMD(d as string | Date) : undefined
+          if (prev.selectedDateYMD === ymd) return prev
+          return { selectedDateYMD: ymd }
+        })
+      },
       setListFilter: (f) => set(() => ({ listFilter: f })),
       clearListFilter: () => set(() => ({ listFilter: null })),
       setSort: (by, order) =>

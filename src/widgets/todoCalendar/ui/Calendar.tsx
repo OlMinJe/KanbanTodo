@@ -1,22 +1,36 @@
 import { useTodoStore } from '@/entities/todo'
+import { useSearch } from '@/features/search'
 import { Calendar as BaseCalendar } from '@/shared/ui/shadcn'
 import { DayButton } from '@/widgets/todoCalendar'
-import { useState, type ComponentProps } from 'react'
+import { useEffect, useMemo, type ComponentProps } from 'react'
 
 type CalendarProps = ComponentProps<typeof BaseCalendar>
 
 const Calendar = ({ className, ...props }: CalendarProps) => {
-  const [date, setDate] = useState<Date | undefined>(new Date())
+  const search = useSearch()
+
+  const selectedDateYMD = useTodoStore((s: any) => s.selectedDateYMD as string | undefined)
   const setSelectedDate = useTodoStore((s) => s.setSelectedDate)
+
+  const selectedDate = useMemo(
+    () => (selectedDateYMD ? new Date(`${selectedDateYMD}T00:00:00`) : undefined),
+    [selectedDateYMD]
+  )
+
+  useEffect(() => {
+    if (selectedDateYMD) {
+      search.reset()
+    }
+  }, [selectedDateYMD])
 
   return (
     <BaseCalendar
       {...props}
       mode="single"
-      selected={date}
+      selected={selectedDate}
       onSelect={(d) => {
         if (!d) return
-        setDate(d)
+        console.log(d)
         setSelectedDate(d)
       }}
       className="mt-0 mb-5 mx-auto text-foreground"

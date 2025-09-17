@@ -13,7 +13,9 @@ export default function Toolbar() {
 
   return (
     <div className="flex justify-between mb-2">
-      <div>Total {count || '0'}</div>
+      <div>
+        Total <strong>{count || '0'}</strong>
+      </div>
       <div className="relative flex items-center justify-end gap-2">
         <button
           type="button"

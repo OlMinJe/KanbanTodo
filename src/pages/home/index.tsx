@@ -4,9 +4,9 @@ import { Toolbar } from '@/widgets/todoToolbar'
 
 export default function Home() {
   return (
-    <div className="w-fit my-0 mx-auto text-center">
+    <div className="max-w-[1000px] pb-15 my-0 mx-auto text-center">
       <Calendar />
-      <div className="space-y-4">
+      <div className="p-4 sm:p-6 lg:p-0">
         <Toolbar />
         <Board />
       </div>

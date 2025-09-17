@@ -18,6 +18,11 @@ const Calendar = ({ className, ...props }: CalendarProps) => {
   )
 
   useEffect(() => {
+    setSelectedDate(new Date())
+    search.reset()
+  }, [])
+
+  useEffect(() => {
     if (selectedDateYMD) {
       search.reset()
     }

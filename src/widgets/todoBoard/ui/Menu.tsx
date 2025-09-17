@@ -9,10 +9,10 @@ import {
 } from '@/features/todoDialog'
 import * as Shadcn from '@/shared/ui/shadcn'
 import { Ellipsis, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type SyntheticEvent } from 'react'
 
 export default function Menu({ todo }: { todo: TODO }) {
-  const stop = (e: React.SyntheticEvent) => e.stopPropagation()
+  const stop = (e: SyntheticEvent) => e.stopPropagation()
   const [close, setClose] = useState<() => void>(() => {})
 
   const { confirmRemove } = useTodoActions({

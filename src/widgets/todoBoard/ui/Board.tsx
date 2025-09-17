@@ -37,9 +37,10 @@ export default function Board() {
                         }
                       }}
                       onKeyDown={(e) => {
+                        if (e.currentTarget !== e.target) return
+                        if (e.defaultPrevented) return
+
                         if (e.key === 'Enter' || e.key === ' ') {
-                          const el = e.target as HTMLElement
-                          if (el.closest('[data-card-menu]')) return
                           e.preventDefault()
                           ;(e.currentTarget as HTMLElement).click()
                         }

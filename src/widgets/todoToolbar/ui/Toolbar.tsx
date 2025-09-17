@@ -12,7 +12,7 @@ export default function Toolbar() {
     arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between mb-2">
       <div>Total {count || '0'}</div>
       <div className="relative flex items-center justify-end gap-2">
         <button

@@ -35,7 +35,6 @@ const Calendar = ({ className, ...props }: CalendarProps) => {
       selected={selectedDate}
       onSelect={(d) => {
         if (!d) return
-        console.log(d)
         setSelectedDate(d)
       }}
       className="mt-0 mb-5 mx-auto text-foreground"

@@ -1,7 +1,7 @@
 import { TODO_STATUS, type STATUS_TYPE, type TODO, type TODO_HISTORY } from '@/entities/todo'
-import { partsInTZ } from '@/shared/lib'
+import { fromTZDateISO, fromTZTimeISO, partsInTZ } from '@/shared/lib'
 import { Badge } from '@/shared/ui/shadcn'
-import { TYPE_INFO, buildWhen } from '@/widgets/timeline'
+import { TYPE_INFO } from '@/widgets/timeline'
 import { Calendar, Clock, Pencil } from 'lucide-react'
 import { type ReactNode } from 'react'
 
@@ -13,7 +13,8 @@ type Props = {
 
 export default function TimelineItem({ todo, history, renderMenu }: Props) {
   const info = TYPE_INFO[history.to as STATUS_TYPE] || TYPE_INFO.todo
-  const when = buildWhen(todo.dateSingle as any, todo.timeSingle as any)
+  const date = fromTZDateISO(todo.dateSingle)
+  const time = fromTZTimeISO(todo.timeSingle)
 
   return (
     <div className="relative pl-12">
@@ -38,16 +39,16 @@ export default function TimelineItem({ todo, history, renderMenu }: Props) {
             </div>
 
             <div className="mb-1 flex items-center gap-3 text-[11px] text-muted-foreground">
-              {!!when?.date && (
+              {!!date && (
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="size-3.5" />
-                  {when.date}
+                  {date}
                 </span>
               )}
-              {!!when?.time && (
+              {!!time && (
                 <span className="inline-flex items-center gap-1">
                   <Clock className="size-3.5" />
-                  {when.time}
+                  {time}
                 </span>
               )}
             </div>

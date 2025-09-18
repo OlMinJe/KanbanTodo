@@ -1,7 +1,12 @@
 import type { PRIORITY_TYPE, STATUS_TYPE, TODO, TODO_STATUS_META } from '@/entities/todo'
-import { updateTodo as apiUpdateTodo, createTodo } from '@/entities/todo'
+import {
+  updateTodo as apiUpdateTodo,
+  createTodo,
+  TODO_PRIORITY,
+  TODO_STATUS,
+} from '@/entities/todo'
 import { useTodoFormStore } from '@/features/todoDialog'
-import { fromISO } from '@/shared/lib'
+import { toServerTZ, toTZDateISO, toTZTimeISO } from '@/shared/lib'
 import { useCallback, type FormEvent } from 'react'
 import { shallow } from 'zustand/shallow'
 
@@ -31,36 +36,36 @@ export function useTodoActions({ todo, onDone }: Params) {
 
   const toSubmitPayload = useCallback(() => {
     const p = buildPayload()
-    const nowISO = new Date().toISOString()
-    const schedule = { type: 'single', at: (p.schedule.at as string) ?? nowISO } as const
 
     return {
       title: p.title,
-      status: (p.status || undefined) as STATUS_TYPE | undefined,
-      priority: (p.priority || undefined) as PRIORITY_TYPE | undefined,
-      description: p.description ?? null,
-      schedule,
+      status: (p.status || TODO_STATUS.TODO) as STATUS_TYPE,
+      priority: (p.priority || TODO_PRIORITY.P1) as PRIORITY_TYPE,
+      description: p.description?.trim() ?? null,
+      dateSingle: toTZDateISO(p.dateSingle),
+      timeSingle: toTZTimeISO(p.timeSingle),
+      tags: [],
     }
   }, [buildPayload])
 
   const toUpdatedTodo = useCallback(
     (base: TODO) => {
       const p = buildPayload()
-      const { schedule, title, status, priority, description } = p
 
       let next: Partial<TODO> = {
-        title: title.trim(),
-        status: (status || base.status) as STATUS_TYPE,
-        priority: (priority || base.priority) as PRIORITY_TYPE,
-        description: description?.trim() || null,
+        title: p.title.trim(),
+        status: (p.status || base.status) as STATUS_TYPE,
+        priority: (p.priority || base.priority) as PRIORITY_TYPE,
+        description: p.description?.trim() || null,
       }
 
-      const at = schedule.at ?? new Date().toISOString()
-      const { date, time } = fromISO(at)
+      const date = new Date()
+      const nowISO = toServerTZ(date)
       next = {
         ...next,
-        dateSingle: date,
-        timeSingle: time,
+        dateSingle: toTZDateISO(p.dateSingle),
+        timeSingle: toTZTimeISO(p.timeSingle),
+        updatedAt: nowISO,
       }
       return next
     },

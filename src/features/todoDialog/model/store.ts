@@ -1,12 +1,9 @@
-import type { TODO } from '@/entities/todo'
+import { TODO_STATUS, type TODO } from '@/entities/todo'
 import { getTodo } from '@/entities/todo/api'
 import type { INIT_OPTION, TODO_FORM_STORE } from '@/features/todoDialog'
-import {
-  buildSchedule,
-  INITIAL_STATE,
-  makeCoreErrors,
-  makeScheduleErrors,
-} from '@/features/todoDialog'
+import { INITIAL_STATE, makeCoreErrors, makeScheduleErrors } from '@/features/todoDialog'
+import { fromTZDateISO, fromTZTimeISO, partsInTZ } from '@/shared/lib'
+import { PRIORITY_LABEL } from '@/widgets/todoBoard'
 import { createStore } from 'zustand/vanilla'
 
 const ERROR_CLEAR_MAP: Partial<Record<keyof TODO, (keyof (typeof INITIAL_STATE)['errors'])[]>> = {
@@ -19,7 +16,6 @@ const ERROR_CLEAR_MAP: Partial<Record<keyof TODO, (keyof (typeof INITIAL_STATE)[
 
 export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
   ...INITIAL_STATE,
-
   init: async (opt: INIT_OPTION) => {
     set(() => ({ ...INITIAL_STATE, mode: opt.mode }))
 
@@ -30,24 +26,24 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
         ...s,
         mode: 'update',
         title: rec.title ?? '',
-        status: rec.status ?? '',
-        priority: rec.priority ?? '',
+        status: rec.status ?? TODO_STATUS.TODO,
+        priority: rec.priority ?? PRIORITY_LABEL.P1,
         description: rec.description ?? '',
-        dateSingle: rec.dateSingle ? new Date(rec.dateSingle) : null,
-        timeSingle: rec.timeSingle ?? '',
+        dateSingle: fromTZDateISO(rec.dateSingle) ?? '',
+        timeSingle: fromTZTimeISO(rec.timeSingle) ?? '',
         errors: {},
         editVariant: rec.status,
       }))
     }
 
     if (opt.mode === 'create') {
-      const hhmm = new Date().toISOString().substring(11, 16)
+      const { date, time } = partsInTZ(new Date())
       set((s) => ({
         ...s,
         status: s.status || 'todo',
         priority: s.priority || 'P2',
-        dateSingle: s.dateSingle ?? new Date(),
-        timeSingle: s.timeSingle || hhmm,
+        dateSingle: s.dateSingle ?? date,
+        timeSingle: s.timeSingle || time,
         errors: {},
       }))
     }
@@ -108,14 +104,14 @@ export const todoFormStore = createStore<TODO_FORM_STORE>()((set, get) => ({
 
   buildPayload: () => {
     const s = get()
-    const schedule = buildSchedule(s.dateSingle, s.timeSingle)
     return {
       title: s.title,
       status: s.status,
       priority: s.priority,
       description: s.description,
       mode: s.mode,
-      schedule,
+      dateSingle: s.dateSingle,
+      timeSingle: s.timeSingle,
     }
   },
 }))

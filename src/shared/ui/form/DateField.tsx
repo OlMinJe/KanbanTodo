@@ -1,12 +1,12 @@
-import { cn, fmt } from '@/shared/lib'
-import { BaseField, type DATE_TYPE, type TRIGGER_PROPS } from '@/shared/ui/form'
+import { cn, fmt, type RAW_DATE } from '@/shared/lib'
+import { BaseField, type TRIGGER_PROPS } from '@/shared/ui/form'
 import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/shadcn'
 import { ChevronDownIcon } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 
 type DATE_FIELD_PROPS = TRIGGER_PROPS & {
-  value: DATE_TYPE
-  onChange: (d: DATE_TYPE) => void
+  value: RAW_DATE
+  onChange: (d: RAW_DATE) => void
   open: boolean
   onOpenChange: (o: boolean) => void
 }

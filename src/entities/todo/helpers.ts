@@ -1,45 +1,28 @@
-import type { PRIORITY_TYPE, STATUS_TYPE, SUBMIT_PAYLOAD, TODO } from '@/entities/todo'
-import { TODO_PRIORITY, TODO_STATUS } from '@/entities/todo'
-import { fromISO, uuidv4 } from '@/shared/lib'
+import type { STATUS_TYPE, SUBMIT_PAYLOAD, TODO } from '@/entities/todo'
+import { uuidv4 } from '@/shared/lib'
+
+export const includesYMD = (todo: TODO, ymd: string): boolean => {
+  const single = (todo as any).dateSingle
+  return !!single && single === ymd
+}
 
 export function todoCreateDTO(p: SUBMIT_PAYLOAD): TODO {
   const now = new Date().toISOString()
-  const status: STATUS_TYPE = (p.status || TODO_STATUS.TODO) as STATUS_TYPE
-  const priority: PRIORITY_TYPE = (p.priority || TODO_PRIORITY.P2) as PRIORITY_TYPE
 
   const base: TODO = {
+    ...p,
     id: uuidv4(),
-    title: p.title.trim(),
-    status,
-    priority,
-    description: p.description?.trim() || null,
-    tags: [],
     createdAt: now,
     updatedAt: now,
+    title: p.title,
+    status: p.status,
+    priority: p.priority,
+    description: p.description ?? null,
+    dateSingle: p.dateSingle,
+    timeSingle: p.timeSingle,
   }
 
-  const { date, time } = fromISO(p.schedule.at!)
-  return { ...base, dateSingle: date, timeSingle: time }
-}
-
-export function normalizeUpdateFromPayload(base: TODO, p: SUBMIT_PAYLOAD): TODO {
-  const now = new Date().toISOString()
-  let next: TODO = {
-    ...base,
-    title: p.title.trim(),
-    status: (p.status || base.status) as STATUS_TYPE,
-    priority: (p.priority || base.priority) as PRIORITY_TYPE,
-    description: p.description?.trim() || null,
-    updatedAt: now,
-  }
-  const { date, time } = fromISO(p.schedule.at!)
-  next = {
-    ...next,
-    dateSingle: date,
-    timeSingle: time,
-  }
-
-  return next
+  return base
 }
 
 export const matchStatus = (t: TODO, st?: STATUS_TYPE | STATUS_TYPE[]) => {
@@ -71,10 +54,4 @@ export const matchQuery = (t: TODO, q?: string) => {
       .toLowerCase()
       .includes(s)
   )
-}
-
-export const includesYMD = (todo: TODO, ymd: string): boolean => {
-  const single = (todo as any).dateSingle
-  return !!single && single === ymd
-  // }
 }

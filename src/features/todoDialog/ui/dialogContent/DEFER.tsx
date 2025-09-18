@@ -1,5 +1,5 @@
 import { DatePopover } from '@/features/todoDialog'
-import { asYMD } from '@/shared/lib' // 날짜 문자열 변환용
+import { asYMD, toTZDateISO, type RAW_DATE } from '@/shared/lib' // 날짜 문자열 변환용
 import { InputField } from '@/shared/ui/form'
 
 type Props = {
@@ -27,7 +27,7 @@ export default function Defer(props: Props) {
     retryTimeError,
   } = props
 
-  const dateValue: Date | null = retryDate ? new Date(`${retryDate}T00:00:00`) : null
+  const dateValue: RAW_DATE = toTZDateISO(retryDate)
 
   return (
     <div className="space-y-4 py-2">
@@ -53,7 +53,7 @@ export default function Defer(props: Props) {
           label="재시도 날짜"
           required
           value={dateValue}
-          onValueChange={(d?: Date | null) => setRetryDate(d ? asYMD(d) : '')}
+          onValueChange={(d?: RAW_DATE) => setRetryDate(d ? asYMD(d) : '')}
           error={retryDateError}
           containerClassName="flex flex-col gap-3 basis-1/2"
         />

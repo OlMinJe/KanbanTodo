@@ -1,5 +1,5 @@
 import { useTodoFormStore } from '@/features/todoDialog'
-import { asYMD, ensureHMS, hms8, partsAtKST } from '@/shared/lib'
+import { asYMD, ensureHMS, fromServerTZ } from '@/shared/lib'
 import { useEffect, useMemo, useRef, type ChangeEvent } from 'react'
 
 export function useScheduleFields({ openedAt }: { openedAt?: number }) {
@@ -11,9 +11,14 @@ export function useScheduleFields({ openedAt }: { openedAt?: number }) {
   }, [openedAt])
 
   const bases = useMemo(() => {
-    const base = partsAtKST(openedRef.current)
-    const plus3 = partsAtKST(openedRef.current + 3 * 3600 * 1000)
-    return { baseDate: base.date, baseTime: base.time, endDate: plus3.date, endTime: plus3.time }
+    const base = fromServerTZ(String(openedRef.current))
+    const plus3 = fromServerTZ(String(openedRef.current + 3 * 3600 * 1000))
+    return {
+      baseDate: base.dateYMD,
+      baseTime: base.timeHMS,
+      endDate: plus3.dateYMD,
+      endTime: plus3.timeHMS,
+    }
   }, [openedRef.current])
 
   useEffect(() => {
@@ -35,7 +40,7 @@ export function useScheduleFields({ openedAt }: { openedAt?: number }) {
   return {
     state: { dateSingle, timeSingle },
     display: {
-      timeSingle: hms8(timeSingle),
+      timeSingle: timeSingle,
     },
     handlers: {
       onChangeSingleDate,

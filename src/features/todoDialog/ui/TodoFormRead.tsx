@@ -7,38 +7,16 @@ import {
   TodoForm,
   useTodoActions,
 } from '@/features/todoDialog'
-import { fromISO, getStatusLabel } from '@/shared/lib'
+import { fromTZDateISO, fromTZTimeISO, getStatusLabel } from '@/shared/lib'
 import { Button } from '@/shared/ui/shadcn'
 import { PRIORITY_LABEL } from '@/widgets/todoBoard'
 import { useEffect, useMemo, useState } from 'react'
 
-function pickParts(
-  todo: any,
-  isoKey: string,
-  dateKey: string,
-  timeKey: string
-): { date?: string; time?: string } {
-  const iso = todo?.[isoKey] as string | undefined | null
-  if (iso) {
-    const parts = fromISO(iso)
-    return {
-      date: parts.date,
-      time: parts.time ? parts.time.slice(0, 5) : undefined,
-    }
-  }
-  return {
-    date: todo?.[dateKey],
-    time: (todo?.[timeKey] ?? '').slice(0, 5) || undefined,
-  }
-}
-
-export default function TodoFormRead({
-  todoId,
-  onCancel,
-}: {
+type PROPS = {
   todoId: string
   onCancel: () => void
-}) {
+}
+export default function TodoFormRead({ todoId, onCancel }: PROPS) {
   const [todo, setTodo] = useState<TODO | undefined>(undefined)
 
   const { confirmRemove } = useTodoActions({
@@ -56,10 +34,9 @@ export default function TodoFormRead({
   const display = useMemo(() => {
     if (!todo) return null
 
-    const single = pickParts(todo, 'scheduledAt', 'dateSingle', 'timeSingle')
     return {
-      dateSingle: single.date ?? '-',
-      timeSingle: single.time ?? '-',
+      dateSingle: fromTZDateISO(todo.dateSingle) ?? '-',
+      timeSingle: fromTZTimeISO(todo.timeSingle) ?? '-',
     }
   }, [todo])
 

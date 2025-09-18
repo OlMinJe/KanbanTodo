@@ -1,16 +1,44 @@
-export type DateInput = Date | string | number | null | undefined
-
+export type RAW_DATE = Date | string | null | undefined
 export const KST_TZ = 'Asia/Seoul' as const
 
-// Date 파라미터 정규화
-const asDate = (d: DateInput): Date | null => {
+export const pad2 = (n: number) => String(n).padStart(2, '0')
+
+export const asDate = (d: RAW_DATE): Date | null => {
   if (d == null) return null
   const date = d instanceof Date ? d : new Date(d)
   return Number.isNaN(date.getTime()) ? null : date
 }
 
-// TZ 기준 Y/M/D 숫자 파싱 (toISO에서만 사용)
-const ymdInTZ = (date: Date, tz: string = KST_TZ) => {
+/**
+ * ensureHMS
+ * @param s (string)
+ * @returns 'HH:mm:ss'
+ */
+export const ensureHMS = (s?: string) => {
+  if (!s) return '00:00:00'
+  const parts = s.split(':')
+  if (parts.length === 2) return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:00`
+  const [hh = '00', mm = '00', ss = '00'] = parts
+  return `${hh.padStart(2, '0')}:${mm.padStart(2, '0')}:${ss.padStart(2, '0')}`
+}
+
+/**
+ * asYMD
+ * @param d (Date | string)
+ * @returns 'YYYY-MM-DD' (KST 기준)
+ */
+export const asYMD = (d: Date | string) => {
+  if (typeof d === 'string') return d.slice(0, 10)
+  return d.toLocaleDateString('en-CA', { timeZone: KST_TZ })
+}
+
+/**
+ * ymdInTZ
+ * @param date
+ * @param tz
+ * @returns y, m, d (TZ 기준으로 Y/M/D 추출)
+ */
+export const ymdInTZ = (date: Date, tz: string = KST_TZ) => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: tz,
     year: 'numeric',
@@ -22,12 +50,14 @@ const ymdInTZ = (date: Date, tz: string = KST_TZ) => {
   const d = Number(parts.find((p) => p.type === 'day')!.value)
   return { y, m, d }
 }
-const pad2 = (n: number) => String(n).padStart(2, '0')
 
-// 공통 포맷 헬퍼: 주어진 Date를 지정 TZ 기준으로 {date, time} 문자열로 변환
-//  - date: 'YYYY-MM-DD' (en-CA)
-//  - time: 'HH:mm:ss'   (en-GB, 24h, zero-pad)
-export const partsInTZ = (date: Date, tz?: string) => {
+/**
+ * partsInTZ
+ * @param date
+ * @param tz
+ * @returns { date: dateStr, time: timeStr } KST 기준 날짜와 시간 각각 포맷
+ */
+export const partsInTZ = (date: Date, tz: string = KST_TZ) => {
   const dateStr = date.toLocaleDateString('en-CA', { timeZone: tz }) // YYYY-MM-DD
   const timeStr = date.toLocaleTimeString('en-GB', {
     timeZone: tz,
@@ -39,14 +69,17 @@ export const partsInTZ = (date: Date, tz?: string) => {
   return { date: dateStr, time: timeStr }
 }
 
-// ──────────────────────────────────────────────────────────
-/** ko-KR 사용자용 가독 포맷
- *  - fmt(new Date()) -> "2025. 8. 26."
- *  - fmt(new Date(), 'ko-KR', { dateStyle: 'full' }) -> "2025년 8월 26일 화요일"
- *  - fmt(new Date(), 'ko-KR', { dateStyle: 'medium', timeStyle: 'short' })
+/**
+ * function
+ * @param d
+ * @param locale
+ * @param opts
+ * @param tz
+ * @param fallback
+ * @returns "2025년 8월 26일 화요일" 형식의 포맷 가능(ko-KR)
  */
 export function fmt(
-  d: DateInput,
+  d: RAW_DATE,
   locale: string = 'ko-KR',
   opts?: Intl.DateTimeFormatOptions,
   tz: string = KST_TZ,
@@ -57,76 +90,154 @@ export function fmt(
   return new Intl.DateTimeFormat(locale, { timeZone: tz, ...(opts ?? {}) }).format(date)
 }
 
-// YYYY-MM-DD (기본 KST)
-export function ymd(d: DateInput, tz: string = KST_TZ, fallback = ''): string {
-  const date = asDate(d)
-  if (!date) return fallback
-  return date.toLocaleDateString('en-CA', { timeZone: tz })
-}
+/**
+ * toServerTZ (입력 => 서버 전송)
+ * @param input
+ * @param tz
+ * @returns UTC ISO
+ */
+export function toServerTZ(input: RAW_DATE, tz: string = KST_TZ): string | null {
+  if (!input) return null
 
-// 현재 시각을 KST로 쪼갠 값
-export const nowParts = (tz: string = KST_TZ) => partsInTZ(new Date(), tz)
+  // Date 에서 ISO로 파싱
+  if (typeof input === 'string') {
+    const s = input.trim()
+    const hasTZ = /([zZ]|[+\-]\d{2}:?\d{2})$/.test(s) // UTC 여부 확인
+    if (hasTZ) {
+      const d = new Date(s)
+      return Number.isNaN(d.getTime()) ? null : d.toISOString()
+    }
 
-// 서버에서 가져온 ISO(UTC)를 KST로 변환
-export function fromISO(iso?: string | null, tz: string = KST_TZ) {
-  if (!iso) return { date: undefined, time: undefined }
-  const d = asDate(iso)
-  if (!d) return { date: undefined, time: undefined }
-  return partsInTZ(d, tz)
-}
+    // 'YYYY-MM-DD[ T]HH:mm[:ss]'(KST 기준)
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$/)
+    if (m) {
+      const [, y, mo, d, hh = '00', mm = '00', ss = '00'] = m
+      const Y = Number(y),
+        M = Number(mo),
+        D = Number(d)
+      const H = Number(hh),
+        Min = Number(mm),
+        S = Number(ss)
 
-// 사용자가 고른 날짜/시간(KST)을 공통 시간(UTC ISO)으로 저장
-// - date: Date 또는 'YYYY-MM-DD'
-// - time: 'HH:mm' | 'HH:mm:ss'
-export function toISO(date: Date | string | null, time: string, tz: string = KST_TZ) {
-  if (!date) return null
-  const base = asDate(date)
-  if (!base) return null
-
-  const [hh, mm, ssRaw] = (time ?? '').split(':')
-  const h = Number(hh || 0)
-  const m = Number(mm || 0)
-  const s = Number(ssRaw || 0)
-
-  const { y, m: mon, d } = ymdInTZ(base, tz)
-
-  // KST(+09:00)를 공통 시간(UTC) => UTC = KST - 9h
-  let utcMs: number
-  if (tz === KST_TZ) {
-    utcMs = Date.UTC(y, mon - 1, d, h - 9, m, s, 0)
-  } else {
-    // 필요 시 다른 TZ 지원 가능 (현 요구사항은 KST)
-    const guess = new Date(`${y}-${pad2(mon)}-${pad2(d)}T${pad2(h)}:${pad2(m)}:${pad2(s)}`)
-    utcMs = guess.getTime()
+      if (tz === KST_TZ) {
+        const utcMs = Date.UTC(Y, M - 1, D, H - 9, Min, S, 0)
+        return new Date(utcMs).toISOString()
+      } else {
+        const guess = new Date(`${y}-${mo}-${d}T${hh}:${mm}:${ss}`)
+        return Number.isNaN(guess.getTime()) ? null : guess.toISOString()
+      }
+    }
   }
 
-  return new Date(utcMs).toISOString()
+  // 문자열 이외
+  const base = asDate(input)
+  if (!base) return null
+
+  // TZ 기준
+  const { y, m, d } = ymdInTZ(base, tz)
+  const hms = base.toLocaleTimeString('en-GB', {
+    timeZone: tz,
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+  const [hhStr, mmStr, ssStr] = ensureHMS(hms).split(':')
+  const H = Number(hhStr)
+  const Min = Number(mmStr)
+  const S = Number(ssStr)
+
+  if (tz === KST_TZ) {
+    const utcMs = Date.UTC(y, m - 1, d, H - 9, Min, S, 0)
+    return new Date(utcMs).toISOString()
+  } else {
+    const guess = new Date(`${y}-${pad2(m)}-${pad2(d)}T${pad2(H)}:${pad2(Min)}:${pad2(S)}`)
+    return Number.isNaN(guess.getTime()) ? null : guess.toISOString()
+  }
 }
 
-// 시간 문자열 정규화 & 파생 유틸
-export const ensureHMS = (s?: string) => {
-  if (!s) return '00:00:00'
-  const parts = s.split(':')
-  if (parts.length === 2) return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:00`
-  const [hh = '00', mm = '00', ss = '00'] = parts
-  return `${hh.padStart(2, '0')}:${mm.padStart(2, '0')}:${ss.padStart(2, '0')}`
-}
-export const hms8 = (s?: string) => ensureHMS(s).slice(0, 8)
-
-// Date | 'YYYY-MM-DD' → 'YYYY-MM-DD' (KST)
-export const asYMD = (d: string | Date): string => {
-  if (typeof d === 'string') return d.slice(0, 10)
-  return d.toLocaleDateString('en-CA', { timeZone: KST_TZ })
+/**
+ * toTZDateISO - 날짜만(자정 기준)
+ * @param dateInput
+ * @param tz
+ * @returns 예시 '2025-08-26T00:00:00+09:00'
+ */
+export function toTZDateISO(dateInput: RAW_DATE, tz: string = KST_TZ): string | null {
+  const d = asDate(dateInput)
+  if (!d) return null
+  const ymd = d.toLocaleDateString('en-CA', { timeZone: tz })
+  const offset = tz === KST_TZ ? '+09:00' : 'Z'
+  return `${ymd}T00:00:00${offset}`
 }
 
-// 특정 epoch(ms)을 KST 기준 {date, time}으로
-export const partsAtKST = (ms: number) => {
-  return partsInTZ(new Date(ms), KST_TZ)
+/**
+ * toTZTimeISO - 시간만(기준일 1970-01-01)
+ * @param timeInput
+ * @param tz
+ * @returns 예시 '1970-01-01T10:30:00+09:00'
+ */
+export function toTZTimeISO(timeInput?: string | null, tz: string = KST_TZ): string | null {
+  const hms = ensureHMS(timeInput ?? '00:00:00')
+  const offset = tz === KST_TZ ? '+09:00' : 'Z'
+  return `1970-01-01T${hms}${offset}`
 }
 
-// KST(YYYY-MM-DD + HH:mm:ss) → UTC epoch(ms)
-export const msFromKST = (dateYMD?: string, timeHMS?: string) => {
-  if (!dateYMD || !timeHMS) return NaN
-  const iso = toISO(dateYMD, ensureHMS(timeHMS)) // KST → UTC ISO
-  return iso ? new Date(iso).getTime() : NaN
+/**
+ * fromServerTZ - UTC ISO => KST
+ * @param iso
+ * @param tz
+ * @returns dateYMD = 'YYYY-MM-DD'
+ * @returns timeHMS = 'HH:mm:ss'
+ * @returns pretty = '2025년 8월 26일 화요일'
+ * @returns dateObj = Date
+ */
+export function fromServerTZ(
+  iso?: string | null,
+  tz: string = KST_TZ
+): { dateYMD?: string; timeHMS?: string; pretty?: string; dateObj?: Date } {
+  const d = asDate(iso)
+  if (!d) return {}
+
+  const dateYMD = d.toLocaleDateString('en-CA', { timeZone: tz })
+  const timeHMS = d.toLocaleTimeString('en-GB', {
+    timeZone: tz,
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+  const pretty = fmt(d, 'ko-KR', { dateStyle: 'full' }, tz)
+  const dateObj = new Date(`${dateYMD}T${timeHMS}+09:00`)
+
+  return { dateYMD, timeHMS, pretty, dateObj }
+}
+
+/**
+ * fromTZDateISO - 날짜만(자정 기준)
+ * @param iso
+ * @param tz
+ * @returns 'YYYY-MM-DD'
+ */
+export function fromTZDateISO(iso?: string | null, tz: string = KST_TZ): string | undefined {
+  const d = asDate(iso)
+  if (!d) return undefined
+  return d.toLocaleDateString('en-CA', { timeZone: tz })
+}
+
+/**
+ * fromTZTimeISO - 시간만(기준일 1970-01-01)
+ * @param iso
+ * @param tz
+ * @returns 'HH:mm:ss'
+ */
+export function fromTZTimeISO(iso?: string | null, tz: string = KST_TZ): string | undefined {
+  const d = asDate(iso)
+  if (!d) return undefined
+  return d.toLocaleTimeString('en-GB', {
+    timeZone: tz,
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
 }

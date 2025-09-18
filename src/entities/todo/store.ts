@@ -10,7 +10,6 @@ import type {
 } from '@/entities/todo'
 import {
   filterTodos,
-  includesYMD,
   matchPriority,
   matchQuery,
   matchStatus,
@@ -18,7 +17,7 @@ import {
   TODO_KEY,
   todoCreateDTO,
 } from '@/entities/todo'
-import { asYMD } from '@/shared/lib'
+import { asYMD, toServerTZ, toTZDateISO, toTZTimeISO } from '@/shared/lib'
 import { create } from 'zustand'
 import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware'
 
@@ -39,7 +38,7 @@ type TOTO_ACTIONS = {
   removeTodo: (id: string) => boolean
   getTodo: (id: string) => TODO | undefined
   listTodos: (opts?: LIST_PAYLOAD) => LIST_RESULT
-  filterTodos: (items: TODO[], filter: TODO_FILTER) => TODO[]
+  filterTodos: (items: TODO[], filter?: TODO_FILTER) => TODO[]
   clearAll: () => void
   setSelectedDate: (d?: Date | string) => void
   setListFilter: (f: TODO_FILTER | null) => void
@@ -62,10 +61,10 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
 
       createTodo: (payload) => {
         const record = todoCreateDTO(payload)
-        const now = record.createdAt ?? new Date().toISOString()
+        const now = record.createdAt ?? new Date()
 
         const entry: TODO_HISTORY = {
-          at: now,
+          at: toServerTZ(now),
           from: record.status,
           to: record.status,
           prevDate: record.dateSingle,
@@ -74,7 +73,7 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
 
         const withHistory: TODO = {
           ...record,
-          updatedAt: now,
+          updatedAt: toServerTZ(now),
           history: [...(record.history ?? []), entry],
         }
 
@@ -87,23 +86,23 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
         if (idx < 0) return
 
         const prev = get().items[idx]
-        const now = new Date().toISOString()
+        const now = new Date()
 
         const { meta, ...rest } = patch as { meta?: TODO_HISTORY['meta'] } & Partial<TODO>
         let next: TODO = {
           ...prev,
           ...rest,
-          updatedAt: now,
+          updatedAt: toServerTZ(now),
         }
 
         if (patch.meta?.retryDate && patch.meta?.retryTime) {
-          next.dateSingle = patch.meta?.retryDate
-          next.timeSingle = patch.meta?.retryTime
+          next.dateSingle = toTZDateISO(patch.meta?.retryDate)
+          next.timeSingle = toTZTimeISO(patch.meta?.retryTime)
         }
 
         if (patch.status && patch.status !== prev.status) {
           const entry = {
-            at: now,
+            at: toServerTZ(now),
             from: prev.status,
             to: patch.status,
             meta: patch.meta,
@@ -126,6 +125,7 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
 
       getTodo: (id) => get().items.find((t) => t.id === id),
       listTodos: (opts?: LIST_PAYLOAD) => {
+        // [ ] listTodos - 날짜/시간 파싱 체크
         const { page = 1, pageSize = 20, sortBy = 'at', order = 'desc', filter } = opts ?? {}
 
         const base = get().items
@@ -181,7 +181,7 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
         const ymd = filter.date ? asYMD(filter.date) : undefined
         return (items ?? []).filter(
           (t) =>
-            (!ymd || includesYMD(t, ymd)) &&
+            ymd &&
             matchStatus(t, filter.status) &&
             matchPriority(t, filter.priorities) &&
             matchTags(t, filter.tagsAny, filter.tagsAll) &&

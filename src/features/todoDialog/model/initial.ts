@@ -1,4 +1,5 @@
-import type { PRIORITY_TYPE, STATUS_TYPE } from '@/entities/todo'
+import { type PRIORITY_TYPE, type STATUS_TYPE } from '@/entities/todo'
+import type { RAW_DATE } from '@/shared/lib'
 
 export const INITIAL_STATE = {
   mode: 'create' as 'create' | 'update',
@@ -6,7 +7,7 @@ export const INITIAL_STATE = {
   status: '' as STATUS_TYPE | '',
   priority: '' as PRIORITY_TYPE | '',
   description: '',
-  dateSingle: null as Date | null,
+  dateSingle: '',
   timeSingle: '',
   editOpen: false,
   editVariant: undefined as STATUS_TYPE | undefined,
@@ -23,8 +24,8 @@ export type INIT_OPTION =
         status: STATUS_TYPE | ''
         priority: PRIORITY_TYPE | ''
         description: string
-        dateSingle: Date | null
-        timeSingle: string
+        dateSingle: RAW_DATE
+        timeSingle: string | null
       }>
     }
 
@@ -45,6 +46,7 @@ export type TODO_FORM_STORE = typeof INITIAL_STATE & {
     priority: PRIORITY_TYPE | ''
     description: string
     mode: 'create' | 'update'
-    schedule: any
+    dateSingle: RAW_DATE
+    timeSingle: string | null
   }
 }

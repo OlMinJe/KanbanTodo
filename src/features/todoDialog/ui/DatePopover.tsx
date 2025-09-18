@@ -1,10 +1,10 @@
-import { fmt } from '@/shared/lib'
+import { fmt, type RAW_DATE } from '@/shared/lib'
 import { DateField, type TRIGGER_PROPS } from '@/shared/ui/form'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 
 type Props = TRIGGER_PROPS & {
-  value?: Date | null
-  onValueChange?: (d: Date | null) => void
+  value?: string | null
+  onValueChange?: (d: RAW_DATE) => void
   defaultValue?: Date
 }
 
@@ -28,7 +28,7 @@ const DatePopover = (props: Props) => {
   const placeholderText = useMemo(() => fmt(today), [today])
 
   const [open, setOpen] = useState(false)
-  const [inner, setInner] = useState<Date | undefined>(undefined)
+  const [inner, setInner] = useState<RAW_DATE>(undefined)
 
   const isControlled = value !== undefined
 
@@ -47,7 +47,7 @@ const DatePopover = (props: Props) => {
   }, [isControlled, value, today, onValueChange])
 
   const val = isControlled ? (value ?? undefined) : inner
-  const setVal = (d?: Date) => {
+  const setVal = (d?: RAW_DATE) => {
     if (isControlled) onValueChange?.(d ?? null)
     else setInner(d)
   }

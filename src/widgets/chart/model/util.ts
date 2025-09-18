@@ -1,8 +1,9 @@
 import type { STATUS_TYPE, TODO } from '@/entities/todo'
 import { TODO_STATUS } from '@/entities/todo'
-import { ensureHMS, KST_TZ, msFromKST, partsInTZ, toISO } from '@/shared/lib'
+import { fromTZDateISO, KST_TZ, partsInTZ, toTZDateISO } from '@/shared/lib'
 import { STATUS_ORDER } from '@/widgets/chart'
 
+// [ ] lib로 분리 필요
 export function groupByStatus(items: TODO[]) {
   const g: Record<STATUS_TYPE, TODO[]> = {
     [TODO_STATUS.TODO]: [],
@@ -34,18 +35,19 @@ export function filterWeekKST(items: TODO[], ref: Date = new Date()) {
   const daysFromMonday = (sun0 + 6) % 7
 
   const shiftYMD = (ymd: string, days: number) => {
-    const base = Date.parse(toISO(ymd, '00:00:00', KST_TZ)!)
+    const base = Date.parse(toTZDateISO(ymd, KST_TZ)!)
     return partsInTZ(new Date(base + days * 86_400_000), KST_TZ).date
   }
 
   const startYMD = shiftYMD(todayYMD, -daysFromMonday) // 이번주 월
   const endYMD = shiftYMD(startYMD, 6) // 이번주 일
-  const startMs = Date.parse(toISO(startYMD, '00:00:00', KST_TZ)!)
-  const endMs = Date.parse(toISO(endYMD, '23:59:59', KST_TZ)!)
+  const startMs = Date.parse(toTZDateISO(startYMD, KST_TZ)!)
+  const endMs = Date.parse(toTZDateISO(endYMD, KST_TZ)!)
 
   return items.filter((t) => {
     let sMs: number, eMs: number
-    sMs = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
+    // sMs = (t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
+    sMs = Number(t.dateSingle)
     eMs = sMs
     if (Number.isNaN(sMs) || Number.isNaN(eMs)) return false
     return eMs >= startMs && sMs <= endMs
@@ -60,14 +62,14 @@ export function doneWeekday(items: TODO[]) {
     if (t.status !== TODO_STATUS.DONE) continue
 
     const ymd = t.dateSingle
-    const hms = t.timeSingle ?? '00:00:00'
-    const ms = msFromKST(ymd ?? undefined, ensureHMS(hms))
+    // const hms = t.timeSingle ?? '00:00:00'
+    const ms = fromTZDateISO(ymd)
     if (Number.isNaN(ms)) continue
 
     const wd = new Intl.DateTimeFormat('en-US', {
       timeZone: KST_TZ,
       weekday: 'short',
-    }).format(new Date(ms)) as 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+    }).format(new Date()) as 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
 
     // 월(0)~일(6) 인덱스
     const idx = ({ Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 } as const)[wd]
@@ -82,8 +84,8 @@ export function weekLabelKST(ref: Date = new Date()) {
   const { date } = partsInTZ(ref, KST_TZ) // 'YYYY-MM-DD'
   const [yy, mm, dd] = date.split('-').map(Number)
 
-  const firstIso = toISO(`${yy}-${String(mm).padStart(2, '0')}-01`, '00:00:00', KST_TZ)!
-  const firstDay = new Date(firstIso)
+  // const firstIso = toTZDateISO(ref)
+  const firstDay = new Date()
   const wd = new Intl.DateTimeFormat('en-US', { timeZone: KST_TZ, weekday: 'short' }).format(
     firstDay
   ) as 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
@@ -96,12 +98,12 @@ export function weekLabelKST(ref: Date = new Date()) {
 }
 
 export function toWindowMs(t: TODO): [number, number] {
-  const s = msFromKST(t.dateSingle ?? undefined, ensureHMS(t.timeSingle ?? '00:00:00'))
-  return [s, s]
+  const s = toTZDateISO(t.dateSingle)
+  return [Number(s), Number(s)]
 }
 
 export function dayWindowMs(ymd: string): [number, number] {
-  const start = Date.parse(toISO(ymd, '00:00:00', KST_TZ)!)
-  const end = Date.parse(toISO(ymd, '23:59:59', KST_TZ)!)
+  const start = Date.parse(toTZDateISO(ymd)!)
+  const end = Date.parse(toTZDateISO(ymd)!)
   return [start, end]
 }

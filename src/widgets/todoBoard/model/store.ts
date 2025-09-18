@@ -1,6 +1,7 @@
 import type { SORT_BY, SORT_ORDER, STATUS_TYPE, TODO } from '@/entities/todo'
 import { filterTodos, TODO_STATUS, useTodoStore } from '@/entities/todo'
-import { groupByStatus, sortTodos } from '@/widgets/todoBoard'
+import { groupByStatus } from '@/widgets/chart'
+import { sortTodos } from '@/widgets/todoBoard'
 import { create } from 'zustand'
 
 type BOARD_STATE = {

@@ -1,5 +1,4 @@
 export * from '@/widgets/todoBoard/lib/constants'
-export * from '@/widgets/todoBoard/lib/groupByStatus'
 export * from '@/widgets/todoBoard/lib/sortTodos'
 export * from '@/widgets/todoBoard/lib/theme'
 

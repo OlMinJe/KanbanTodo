@@ -1,4 +1,3 @@
-export * from '@/widgets/timeline/lib/buildWhen'
 export * from '@/widgets/timeline/lib/constants'
 
 export * from '@/widgets/timeline/model/store'

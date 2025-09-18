@@ -10,7 +10,7 @@ export function useBoard() {
 
   useEffect(() => {
     recalc()
-  }, [recalc])
+  }, [])
 
   useEffect(() => {
     const unsub = useTodoStore.subscribe((state, prev) => {

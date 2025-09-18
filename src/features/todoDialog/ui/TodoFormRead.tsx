@@ -9,6 +9,7 @@ import {
 } from '@/features/todoDialog'
 import { fromISO, getStatusLabel } from '@/shared/lib'
 import { Button } from '@/shared/ui/shadcn'
+import { PRIORITY_LABEL } from '@/widgets/todoBoard'
 import { useEffect, useMemo, useState } from 'react'
 
 function pickParts(
@@ -69,7 +70,7 @@ export default function TodoFormRead({
       <section className="space-y-2">
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <BadgeLike label="상태" value={getStatusLabel(todo.status as STATUS_TYPE)} />
-          <BadgeLike label="우선순위" value={todo.priority} />
+          <BadgeLike label="우선순위" value={PRIORITY_LABEL[todo.priority]} />
         </div>
       </section>
 

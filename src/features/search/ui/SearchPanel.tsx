@@ -1,6 +1,7 @@
 import type { PRIORITY_TYPE, SORT_BY, SORT_ORDER, STATUS_TYPE } from '@/entities/todo'
 import { TODO_STATUS } from '@/entities/todo'
 import { SearchField } from '@/features/search'
+import { PRIORITY_OPTIONS } from '@/features/todoDialog'
 
 type PROPS = {
   q: string
@@ -67,14 +68,14 @@ export default function SearchPanel(props: PROPS) {
 
       <div className="mb-2 text-xs text-gray-600">우선순위</div>
       <div className="mb-3 grid grid-cols-3 gap-2 text-sm">
-        {(['P1', 'P2', 'P3'] as const).map((p) => (
-          <label key={p} className="flex items-center gap-2">
+        {PRIORITY_OPTIONS.map((p) => (
+          <label key={p.value} className="flex items-center gap-2">
             <input
               type="checkbox"
-              checked={priorities.includes(p)}
-              onChange={() => togglePriority(p)}
+              checked={priorities.includes(p.value)}
+              onChange={() => togglePriority(p.value as PRIORITY_TYPE)}
             />
-            {p}
+            {p.label}
           </label>
         ))}
       </div>

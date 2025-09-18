@@ -1,5 +1,6 @@
 import { type TODO } from '@/entities/todo'
 import * as Shadcn from '@/shared/ui/shadcn'
+import { PRIORITY_LABEL } from '@/widgets/todoBoard'
 import type { ReactNode } from 'react'
 
 type Props = {
@@ -53,7 +54,8 @@ export default function Card({ todo, renderMenu }: Props) {
             </span>
           </div>
 
-          <span className="text-xs text-gray-500">{todo.priority}</span>
+          {/* const label = PRIORITY_LABEL[priority]  */}
+          <span className="text-xs text-gray-500">{PRIORITY_LABEL[todo.priority]}</span>
         </div>
       </Shadcn.CardContent>
     </Shadcn.Card>

@@ -29,19 +29,32 @@ export default function ActivityTimeline() {
           </div>
           <button
             type="button"
-            className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+            aria-label="Filter Panel Button"
+            aria-pressed={open}
             onClick={() => setOpen(!open)}
-            aria-label="Filter, Search and Sort"
+            className="rounded p-1
+             text-muted-foreground hover:bg-muted hover:text-foreground
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+             disabled:pointer-events-none disabled:opacity-50
+             transition-colors"
           >
             <Funnel width="15px" height="15px" />
           </button>
         </div>
 
         {open && (
-          <div className="absolute right-5 top-20 z-10 w-72 rounded-xl border bg-white dark:bg-black p-3 shadow-xl">
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="absolute right-5 top-20 z-50 w-72 rounded-xl border
+             bg-background text-foreground border-border p-3 shadow-xl
+             transition-colors"
+          >
             <div className="mb-2 flex items-start justify-end">
               <button
-                className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="rounded p-1 text-muted-foreground hover:bg-muted
+                 focus:outline-none focus:ring-2 focus:ring-ring
+                 transition-colors"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
               >

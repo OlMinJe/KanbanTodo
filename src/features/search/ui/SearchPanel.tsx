@@ -18,6 +18,7 @@ type PROPS = {
   onReset: () => void
 }
 
+// [ ] board에는 작업 상태 "삭제" 미노출
 const STATUS_OPTIONS = [
   { key: TODO_STATUS.TODO, label: '할 일' },
   { key: TODO_STATUS.DOING, label: '진행중' },

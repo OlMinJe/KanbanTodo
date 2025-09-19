@@ -1,7 +1,8 @@
-import { getStatusLabel, getTodo, TODO_STATUS, type STATUS_TYPE, type TODO } from '@/entities/todo'
+import { getTodo, TODO_STATUS, type STATUS_TYPE, type TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import {
   EditDialog,
+  getStatusLabel,
   PROPS_INFO,
   STATUS_DIALOG_TEXT,
   TodoForm,

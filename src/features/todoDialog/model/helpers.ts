@@ -1,4 +1,5 @@
 import type { FORM_ERRORS, STATUS_TYPE } from '@/entities/todo'
+import { STATUS_LABELS } from '@/features/todoDialog'
 import { type RAW_DATE } from '@/shared/lib'
 
 export const makeCoreErrors = (
@@ -19,3 +20,5 @@ export const makeScheduleErrors = (ds: RAW_DATE, ts: string | null): FORM_ERRORS
   if (!ts) e.timeSingle = '시간을 입력하세요.'
   return e
 }
+
+export const getStatusLabel = (code: STATUS_TYPE) => STATUS_LABELS[code]

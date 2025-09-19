@@ -22,6 +22,7 @@ export type SearchState = {
   syncFromTodo: () => void
 }
 
+// [ ] useSearchStore - 필터가 정상작동 하는지 확인 필요
 export const useSearchStore = create<SearchState>((set, get) => ({
   ...(() => {
     const s = useTodoStore.getState()

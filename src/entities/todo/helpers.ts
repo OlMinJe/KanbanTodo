@@ -1,5 +1,6 @@
 import type { STATUS_TYPE, SUBMIT_PAYLOAD, TODO } from '@/entities/todo'
 import { uuidv4 } from '@/shared/lib'
+import { dayWindowMs } from '@/widgets/chart'
 
 export const includesYMD = (todo: TODO, ymd: string): boolean => {
   const single = (todo as any).dateSingle
@@ -23,6 +24,17 @@ export function todoCreateDTO(p: SUBMIT_PAYLOAD): TODO {
   }
 
   return base
+}
+
+export function matchDate(t: TODO, ymd?: string | null): boolean {
+  console.log(t.dateSingle?.slice(0, 10), ymd)
+  const dateSingle = t.dateSingle?.slice(0, 10) ?? null
+  if (!ymd) return true
+  if (dateSingle) return dateSingle === ymd
+
+  const [ds, de] = dayWindowMs(ymd)
+  const [ts, te] = dayWindowMs(t.dateSingle)
+  return te >= ds && ts <= de
 }
 
 export const matchStatus = (t: TODO, st?: STATUS_TYPE | STATUS_TYPE[]) => {

@@ -71,7 +71,7 @@ export type FORM_ERRORS = Partial<
 >
 
 export type TODO_FILTER = {
-  date?: Date | string
+  date?: string | null
   status?: STATUS_TYPE | STATUS_TYPE[]
   priorities?: PRIORITY_TYPE[]
   q?: string

@@ -1,4 +1,4 @@
-import { includesYMD, TODO_STATUS, useTodoStore, type TODO } from '@/entities/todo'
+import { TODO_STATUS, useTodoStore, type TODO } from '@/entities/todo'
 import { asYMD } from '@/shared/lib'
 import { create } from 'zustand'
 
@@ -17,8 +17,9 @@ export const useToolbarStore = create<TOOLBAR_STATE>((set) => ({
     const s = useTodoStore.getState()
     const items = (s.items ?? []) as TODO[]
     const ymd = asYMD(s.selectedDateYMD as string | Date)
+
     const today = items.filter(
-      (t) => (!ymd || includesYMD(t, ymd)) && t.status !== TODO_STATUS.REMOVE
+      (t) => ymd === t.dateSingle?.slice(0, 10) && t.status !== TODO_STATUS.REMOVE
     )
     set({ count: today.length })
   },

@@ -10,6 +10,7 @@ import type {
 } from '@/entities/todo'
 import {
   filterTodos,
+  matchDate,
   matchPriority,
   matchQuery,
   matchStatus,
@@ -178,14 +179,16 @@ export const useTodoStore = create<TOTO_STATE & TOTO_ACTIONS>()(
         }
       },
       filterTodos: (items: TODO[], filter: TODO_FILTER = {}) => {
-        const ymd = filter.date ? asYMD(filter.date) : undefined
-        return (items ?? []).filter(
+        if (!items?.length) return []
+        const { date, status, priorities, tagsAny, tagsAll, q } = filter
+
+        return items.filter(
           (t) =>
-            ymd &&
-            matchStatus(t, filter.status) &&
-            matchPriority(t, filter.priorities) &&
-            matchTags(t, filter.tagsAny, filter.tagsAll) &&
-            matchQuery(t, filter.q)
+            matchDate(t, date) &&
+            matchStatus(t, status) &&
+            matchPriority(t, priorities) &&
+            matchTags(t, tagsAny, tagsAll) &&
+            matchQuery(t, q)
         )
       },
       clearAll: () => set(() => ({ items: [] })),

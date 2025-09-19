@@ -25,12 +25,17 @@ export default function BarCharHorizontal() {
       const n = groupedThisWeek[s]?.length ?? 0
       if (n > max) max = n
     }
+
     return {
       topStatuses: STATUS_ORDER.filter((s) => (groupedThisWeek[s]?.length ?? 0) === max),
       topCount: max,
       total: weekItems.length,
     }
   }, [groupedThisWeek, weekItems.length])
+
+  const topLabels = topStatuses
+    .map((s) => horizontalConfig[s as keyof typeof horizontalConfig]?.label ?? s)
+    .join(', ')
 
   const pct = total ? (topCount / total) * 100 : 0
 
@@ -75,7 +80,7 @@ export default function BarCharHorizontal() {
       </Shadcn.CardContent>
       <Shadcn.CardFooter className="text-sm flex-col gap-1">
         <div>
-          <b>{topStatuses}</b> <span className="text-red-400">{pct.toFixed(2)}%</span>
+          <b>{topLabels}</b> <span className="text-red-400">{pct.toFixed(2)}%</span>
           <span className="text-gray-400">
             ({topCount}/{total})
           </span>

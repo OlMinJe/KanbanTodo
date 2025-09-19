@@ -3,7 +3,7 @@
 import { TODO_STATUS, useTodoStore } from '@/entities/todo'
 import { KST_TZ, partsInTZ, toTZDateISO } from '@/shared/lib'
 import * as Shadcn from '@/shared/ui/shadcn'
-import { chartConfig, DAY_MS, DAYS, dayWindowMs, STATUS_ORDER, toWindowMs } from '@/widgets/chart'
+import { chartConfig, DAY_MS, DAYS, dayWindowMs, STATUS_ORDER } from '@/widgets/chart'
 import { useMemo } from 'react'
 import { Area, AreaChart as BaseAreaChart, CartesianGrid, XAxis } from 'recharts'
 
@@ -15,7 +15,7 @@ export default function AreaChart() {
   const data = useMemo(() => {
     const { date: todayYMD } = partsInTZ(new Date(), KST_TZ)
     const startMs = Date.parse(toTZDateISO(todayYMD)!) - (DAYS - 1) * DAY_MS
-    const windows = items.map((t) => ({ t, w: toWindowMs(t) }))
+    const windows = items.map((t) => ({ t, w: dayWindowMs(t.dateSingle) }))
 
     const rows: ROW[] = []
     for (let i = 0; i < DAYS; i++) {

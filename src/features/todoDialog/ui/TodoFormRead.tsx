@@ -1,4 +1,4 @@
-import { getTodo, TODO_STATUS, type STATUS_TYPE, type TODO } from '@/entities/todo'
+import { getStatusLabel, getTodo, TODO_STATUS, type STATUS_TYPE, type TODO } from '@/entities/todo'
 import { BaseDialog } from '@/features/dialog'
 import {
   EditDialog,
@@ -7,15 +7,15 @@ import {
   TodoForm,
   useTodoActions,
 } from '@/features/todoDialog'
-import { fromTZDateISO, fromTZTimeISO, getStatusLabel } from '@/shared/lib'
+import { fromTZDateISO, fromTZTimeISO } from '@/shared/lib'
 import { Button } from '@/shared/ui/shadcn'
 import { PRIORITY_LABEL } from '@/widgets/todoBoard'
 import { useEffect, useMemo, useState } from 'react'
-
 type PROPS = {
   todoId: string
   onCancel: () => void
 }
+
 export default function TodoFormRead({ todoId, onCancel }: PROPS) {
   const [todo, setTodo] = useState<TODO | undefined>(undefined)
 

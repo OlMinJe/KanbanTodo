@@ -142,29 +142,29 @@ export default function TodoForm({ type, onCancel, todoId }: Props) {
       </fieldset>
 
       <div className="flex justify-end">
-        {mode !== 'create' && (
-          <BaseDialog
-            title={STATUS_DIALOG_TEXT[TODO_STATUS.REMOVE].title}
-            des={STATUS_DIALOG_TEXT[TODO_STATUS.REMOVE].description}
-            trigger={
-              <Button type="button" className="text-red-500">
-                삭제
-              </Button>
-            }
-            render={({ close }) => (
-              <EditDialog
-                variant={TODO_STATUS.REMOVE}
-                onCancel={close}
-                onSuccess={async (extra) => {
-                  await confirmRemove(extra)
-                  close()
-                }}
-              />
-            )}
-          />
-        )}
-
         <div className="flex items-center gap-2">
+          {mode !== 'create' && (
+            <BaseDialog
+              title={STATUS_DIALOG_TEXT[TODO_STATUS.REMOVE].title}
+              des={STATUS_DIALOG_TEXT[TODO_STATUS.REMOVE].description}
+              trigger={
+                <Button type="button" className="text-red-500">
+                  삭제
+                </Button>
+              }
+              render={({ close }) => (
+                <EditDialog
+                  variant={TODO_STATUS.REMOVE}
+                  onCancel={close}
+                  onSuccess={async (extra) => {
+                    await confirmRemove(extra)
+                    close()
+                  }}
+                />
+              )}
+            />
+          )}
+
           <Button type="button" onClick={handleCancel}>
             취소
           </Button>
